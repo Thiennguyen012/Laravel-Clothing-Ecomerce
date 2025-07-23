@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Services;
+
+use App\Repository\Interfaces\IProductRepository;
+use App\Repository\ProductRepository;
+use App\Services\Interfaces\IProductService;
+
+class ProductService implements IProductService
+{
+    protected $productRepository;
+    public function __construct(IProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+    // chỉ lấy ra sản phẩm , không lấy được variant
+    public function showAll()
+    {
+        $condititon = [];
+        $data = $this->productRepository->find($condititon);
+        return $data;
+    }
+    public function showProductByCategoryId($id)
+    {
+        $result = $this->productRepository->find(['category_id' => $id]);
+        return $result;
+    }
+    // hàm lấy ra tất cả sản phẩm kèm variant
+    public function getProductWithVariant()
+    {
+        $result = $this->productRepository->getProductWithVariant();
+        return $result;
+    }
+    public function getProductWithVariantByCategoryId($id)
+    {
+        $result = $this->productRepository->getProductWithVariantByCategoryId($id);
+        return $result;
+    }
+    public function getProductInAmount($categoryId = null, $minPrice, $maxPrice)
+    {
+        $result = $this->productRepository->getProductInAmount($categoryId, $minPrice, $maxPrice);
+        return $result;
+    }
+}
