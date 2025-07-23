@@ -55,15 +55,79 @@ class ProductController extends Controller
 
         return view('category', compact('products', 'categories', 'currentCategory', 'totalProducts'));
     }
-    public function getProductInAmount(Request $request, $categoryId = null, $minPrice, $maxPrice)
+    public function getProductInAmount($minPrice, $maxPrice, $categoryId = null)
     {
+        // Lấy tất cả categories
+        $categories = $this->categoryService->listCategory();
 
-        $productInAmount = $this->productService->getProductInAmount($categoryId, $minPrice, $maxPrice);
-        if ($request->is('category*')) {
-            return view('category', compact('productInAmount'));
-        } elseif ($request->is('product*')) {
-            return view('products', compact('productInAmount'));
+        // Lấy products theo khoảng giá và category (nếu có)
+        $products = $this->productService->getProductInAmount($categoryId, $minPrice, $maxPrice);
+
+        // Count total products
+        $totalProducts = $products->count();
+
+        // Nếu có categoryId, tìm current category
+        if ($categoryId) {
+            $currentCategory = $categories->where('category_id', $categoryId)->first();
+
+            if (!$currentCategory) {
+                return redirect()->route('products')->with('error', 'Danh mục không tồn tại');
+            }
+
+            return view('category', compact('products', 'categories', 'currentCategory', 'totalProducts'));
         }
+
+        // Nếu không có category, hiển thị trang products với filter
+        return view('products', compact('products', 'categories', 'totalProducts'));
+    }
+    public function getProductInStock($categoryId = null)
+    {
+        // Lấy tất cả categories
+        $categories = $this->categoryService->listCategory();
+
+        // Lấy products theo khoảng giá và category (nếu có)
+        $products = $this->productService->getProductInStock($categoryId);
+
+        // Count total products
+        $totalProducts = $products->count();
+
+        // Nếu có categoryId, tìm current category
+        if ($categoryId) {
+            $currentCategory = $categories->where('category_id', $categoryId)->first();
+
+            if (!$currentCategory) {
+                return redirect()->route('products')->with('error', 'Danh mục không tồn tại');
+            }
+
+            return view('category', compact('products', 'categories', 'currentCategory', 'totalProducts'));
+        }
+
+        // Nếu không có category, hiển thị trang products với filter
+        return view('products', compact('products', 'categories', 'totalProducts'));
+    }
+    public function sortProductNewest($categoryId = null)
+    {
+        // Lấy tất cả categories
+        $categories = $this->categoryService->listCategory();
+
+        $products = $this->productService->sortProductNewest($categoryId);
+
+        // Count total products
+        $totalProducts = $products->count();
+
+        // Nếu có categoryId, tìm current category
+        if ($categoryId) {
+            $currentCategory = $categories->where('category_id', $categoryId)->first();
+
+            if (!$currentCategory) {
+                return redirect()->route('products')->with('error', 'Danh mục không tồn tại');
+            }
+
+            return view('category', compact('products', 'categories', 'currentCategory', 'totalProducts'));
+        }
+
+        // Nếu không có category, hiển thị trang products với filter
+        return view('products', compact('products', 'categories', 'totalProducts'));
     }
     public function test()
     {

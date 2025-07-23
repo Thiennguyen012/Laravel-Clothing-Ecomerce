@@ -9,4 +9,6 @@ interface IProductRepository extends IBaseRepository
     public function getProductWithVariantById($id);
     public function getProductWithVariantByCategoryId($id);
     public function getProductInAmount($categoryId = null, $minPrice, $maxPrice);
+    public function getProductInStock($categoryId = null);
+    public function sortProduct($categoryId = null, array $conditions = []);
 }

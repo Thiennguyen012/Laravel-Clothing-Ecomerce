@@ -41,4 +41,21 @@ class ProductService implements IProductService
         $result = $this->productRepository->getProductInAmount($categoryId, $minPrice, $maxPrice);
         return $result;
     }
+    public function getProductInStock($categoryId = null)
+    {
+        $result = $this->productRepository->getProductInStock($categoryId);
+        return $result;
+    }
+    public function sortProductNewest($categoryId = null)
+    {
+        $conditions = ['update_at' => 'desc'];
+        $result = $this->productRepository->sortProduct($categoryId, $conditions);
+        return $result;
+    }
+    public function sortProductOldest($categoryId = null)
+    {
+        $conditions = ['update_at' => 'asc'];
+        $result = $this->productRepository->sortProduct($categoryId, $conditions);
+        return $result;
+    }
 }

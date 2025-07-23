@@ -153,7 +153,7 @@
                             <div class="space-y-2">
                                 <label class="flex items-center">
                                     <input type="checkbox" name="in_stock" value="1" 
-                                           {{ request('in_stock') ? 'checked' : '' }}
+                                           id="inStockCheckbox"
                                            onchange="filterProducts()"
                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                     <span class="ml-3 text-sm text-gray-700">Còn hàng</span>
@@ -278,16 +278,30 @@
 
     <!-- Filter JavaScript -->
     <script>
+        // Khởi tạo trạng thái checkbox khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            const inStockCheckbox = document.getElementById('inStockCheckbox');
+            const currentUrl = window.location.pathname;
+            
+            // Kiểm tra nếu URL có chứa "/inStock" thì check checkbox
+            if (currentUrl.includes('/inStock')) {
+                inStockCheckbox.checked = true;
+            } else {
+                inStockCheckbox.checked = false;
+            }
+        });
+
         function filterProducts() {
-            // Get category
+            // Lấy giá trị của các filters
             const category = document.querySelector('input[name="category"]:checked');
-            
-            // Get price range
             const priceRange = document.querySelector('input[name="price_range"]:checked');
+            const inStock = document.querySelector('input[name="in_stock"]:checked');
             
-            // Xử lý chuyển đổi category trước
+            let baseUrl = '';
+            
+            // Kiểm tra nếu có category được chọn (và không phải "Tất cả sản phẩm")
             if (category && category.value) {
-                // Nếu có cả category và price range
+                // Kiểm tra xem có price range không
                 if (priceRange && priceRange.value) {
                     let minPrice, maxPrice;
                     
@@ -311,18 +325,32 @@
                             break;
                         default:
                             // Nếu chọn "Tất cả" price, chỉ chuyển đến category
-                            window.location.href = '/products/' + category.value;
+                            if (inStock) {
+                                baseUrl = '/products/' + category.value + '/inStock';
+                            } else {
+                                baseUrl = '/products/' + category.value;
+                            }
+                            window.location.href = baseUrl;
                             return;
                     }
                     
-                    // Category + Price: /products/{id}/{minPrice}-{maxPrice}
-                    window.location.href = '/products/' + category.value + '/' + minPrice + '-' + maxPrice;
-                    return;
+                    // Category + Price
+                    if (inStock) {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + category.value + '/inStock';
+                    } else {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + category.value;
+                    }
                 } else {
                     // Chỉ có category, không có price range
-                    window.location.href = '/products/' + category.value;
-                    return;
+                    if (inStock) {
+                        baseUrl = '/products/' + category.value + '/inStock';
+                    } else {
+                        baseUrl = '/products/' + category.value;
+                    }
                 }
+                
+                window.location.href = baseUrl;
+                return;
             }
             
             // Nếu chọn "Tất cả sản phẩm" (category value = "")
@@ -351,18 +379,32 @@
                             break;
                         default:
                             // Nếu chọn "Tất cả" price, về trang chính
-                            window.location.href = '/products';
+                            if (inStock) {
+                                baseUrl = '/products/inStock';
+                            } else {
+                                baseUrl = '/products';
+                            }
+                            window.location.href = baseUrl;
                             return;
                     }
                     
-                    // Price only: /products/{minPrice}-{maxPrice}
-                    window.location.href = '/products/' + minPrice + '-' + maxPrice;
-                    return;
+                    // Price only
+                    if (inStock) {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/inStock';
+                    } else {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice;
+                    }
                 } else {
-                    // Không có category và không có price, về trang all products
-                    window.location.href = '/products';
-                    return;
+                    // Không có category và không có price
+                    if (inStock) {
+                        baseUrl = '/products/inStock';
+                    } else {
+                        baseUrl = '/products';
+                    }
                 }
+                
+                window.location.href = baseUrl;
+                return;
             }
             
             // Xử lý khi chỉ thay đổi price range mà không thay đổi category
@@ -391,45 +433,69 @@
                         // Nếu chọn "Tất cả" price, kiểm tra current category
                         const currentCategoryId = getCurrentCategoryId();
                         if (currentCategoryId) {
-                            window.location.href = '/products/' + currentCategoryId;
+                            if (inStock) {
+                                baseUrl = '/products/' + currentCategoryId + '/inStock';
+                            } else {
+                                baseUrl = '/products/' + currentCategoryId;
+                            }
                         } else {
-                            window.location.href = '/products';
+                            if (inStock) {
+                                baseUrl = '/products/inStock';
+                            } else {
+                                baseUrl = '/products';
+                            }
                         }
+                        window.location.href = baseUrl;
                         return;
                 }
                 
                 // Kiểm tra xem đang ở trang category nào
                 const currentCategoryId = getCurrentCategoryId();
                 if (currentCategoryId) {
-                    // Category + Price: /products/{id}/{minPrice}-{maxPrice}
-                    window.location.href = '/products/' + currentCategoryId + '/' + minPrice + '-' + maxPrice;
+                    // Category + Price
+                    if (inStock) {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + currentCategoryId + '/inStock';
+                    } else {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + currentCategoryId;
+                    }
                 } else {
-                    // Price only: /products/{minPrice}-{maxPrice}
-                    window.location.href = '/products/' + minPrice + '-' + maxPrice;
+                    // Price only
+                    if (inStock) {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/inStock';
+                    } else {
+                        baseUrl = '/products/' + minPrice + '-' + maxPrice;
+                    }
                 }
+                
+                window.location.href = baseUrl;
                 return;
             }
             
-            // For other filters (stock, sort), use query parameters on current page
-            const form = new FormData();
-            
-            // Get stock status
-            const inStock = document.querySelector('input[name="in_stock"]:checked');
+            // Chỉ có inStock filter hoặc không có filter nào
             if (inStock) {
-                form.append('in_stock', '1');
+                // Kiểm tra current URL để build proper inStock URL
+                const currentCategoryId = getCurrentCategoryId();
+                const currentPriceRange = getCurrentPriceRange();
+                
+                if (currentCategoryId && currentPriceRange) {
+                    // Category + Price + InStock
+                    baseUrl = '/products/' + currentPriceRange.minPrice + '-' + currentPriceRange.maxPrice + '/' + currentCategoryId + '/inStock';
+                } else if (currentCategoryId) {
+                    // Category + InStock
+                    baseUrl = '/products/' + currentCategoryId + '/inStock';
+                } else if (currentPriceRange) {
+                    // Price + InStock
+                    baseUrl = '/products/' + currentPriceRange.minPrice + '-' + currentPriceRange.maxPrice + '/inStock';
+                } else {
+                    // Just InStock
+                    baseUrl = '/products/inStock';
+                }
+            } else {
+                // No inStock, fallback to current page or products
+                baseUrl = '/products';
             }
             
-            // Get sort
-            const sort = document.querySelector('select[name="sort"]');
-            if (sort && sort.value) {
-                form.append('sort', sort.value);
-            }
-            
-            // Build URL with query parameters
-            const params = new URLSearchParams(form);
-            const baseUrl = window.location.pathname;
-            const url = baseUrl + (params.toString() ? '?' + params.toString() : '');
-            window.location.href = url;
+            window.location.href = baseUrl;
         }
         
         function clearFilters() {
@@ -438,25 +504,64 @@
         
         function removeFilter(filterName) {
             if (filterName === 'category') {
-                // If removing category filter, go to all products
-                window.location.href = '/products';
-                return;
-            }
-            
-            if (filterName === 'price_range') {
-                // If removing price filter, check if we're on a category page
+                // If removing category filter, check if we have price range or inStock
                 const path = window.location.pathname;
-                const categoryMatch = path.match(/\/products\/(\d+)\/\d+-\d+/);
-                if (categoryMatch) {
-                    // We're on category page with price filter, go to category only
-                    window.location.href = '/products/' + categoryMatch[1];
+                const priceRangeMatch = path.match(/\/products\/(\d+)-(\d+)/);
+                const isInStock = path.includes('/inStock');
+                
+                if (priceRangeMatch) {
+                    // We have price range, keep it
+                    if (isInStock) {
+                        window.location.href = '/products/' + priceRangeMatch[1] + '-' + priceRangeMatch[2] + '/inStock';
+                    } else {
+                        window.location.href = '/products/' + priceRangeMatch[1] + '-' + priceRangeMatch[2];
+                    }
                 } else {
-                    // We're on price-only page, go to all products
-                    window.location.href = '/products';
+                    // No price range, check inStock only
+                    if (isInStock) {
+                        window.location.href = '/products/inStock';
+                    } else {
+                        window.location.href = '/products';
+                    }
                 }
                 return;
             }
             
+            if (filterName === 'price_range') {
+                // If removing price filter, check if we're on a category page or inStock
+                const path = window.location.pathname;
+                const isInStock = path.includes('/inStock');
+                
+                // Check for category in price range URL: /products/{price}/{category}
+                const categoryWithPriceMatch = path.match(/\/products\/\d+-\d+\/(\d+)/);
+                
+                if (categoryWithPriceMatch) {
+                    // We're on category page with price filter, go to category only
+                    if (isInStock) {
+                        window.location.href = '/products/' + categoryWithPriceMatch[1] + '/inStock';
+                    } else {
+                        window.location.href = '/products/' + categoryWithPriceMatch[1];
+                    }
+                } else {
+                    // We're on price-only page, go to all products
+                    if (isInStock) {
+                        window.location.href = '/products/inStock';
+                    } else {
+                        window.location.href = '/products';
+                    }
+                }
+                return;
+            }
+            
+            if (filterName === 'in_stock') {
+                // Remove /inStock from current URL
+                const currentUrl = window.location.pathname;
+                const newUrl = currentUrl.replace('/inStock', '');
+                window.location.href = newUrl || '/products';
+                return;
+            }
+            
+            // For query parameters
             const url = new URL(window.location);
             url.searchParams.delete(filterName);
             window.location.href = url.toString();
@@ -467,6 +572,19 @@
             const path = window.location.pathname;
             const matches = path.match(/\/products\/(\d+)/);
             return matches ? matches[1] : null;
+        }
+        
+        function getCurrentPriceRange() {
+            // Get price range from current URL
+            const path = window.location.pathname;
+            const matches = path.match(/\/products\/(\d+)-(\d+)/);
+            if (matches) {
+                return {
+                    minPrice: matches[1],
+                    maxPrice: matches[2]
+                };
+            }
+            return null;
         }
     </script>
 </body>
