@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\Product;
 use App\Repository\Interfaces\IProductRepository;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class ProductRepository extends BaseRepository implements IProductRepository
 {
@@ -66,5 +67,52 @@ class ProductRepository extends BaseRepository implements IProductRepository
             $q->orderBy($conditions);
         });
         return $result;
+    }
+    public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
+    {
+        $query = $this->model->with(['variants', 'category']);
+
+        if ($categoryId) {
+            $query = $query->where('category_id', $categoryId);
+        }
+
+        if ($minPrice && $maxPrice) {
+            $query = $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                $q->whereBetween('price', [$minPrice, $maxPrice]);
+            });
+        }
+
+        if ($inStock) {
+            $query = $query->whereHas('variants', function ($q) {
+                $q->where('quantity', '>', 0);
+            });
+        }
+        if ($order) {
+            switch ($order) {
+                case 'newest':
+                    $query = $query->orderBy('updated_at', 'desc');
+                    break;
+                case 'oldest':
+                    $query = $query->orderBy('updated_at', 'asc');
+                    break;
+                case 'priceDown':
+                    $query = $query->orderBy(
+                        DB::raw('(SELECT MAX(price) FROM variants WHERE variants.product_id = products.product_id)'),
+                        'desc'
+                    );
+                    break;
+                case 'priceUp':
+                    $query = $query->orderBy(
+                        DB::raw('(SELECT MIN(price) FROM variants WHERE variants.product_id = products.product_id)'),
+                        'asc'
+                    );
+                    break;
+                case 'name':
+                    $query = $query->orderBy('product_name', 'asc');
+                    break;
+            }
+        }
+
+        return $query->get();
     }
 }

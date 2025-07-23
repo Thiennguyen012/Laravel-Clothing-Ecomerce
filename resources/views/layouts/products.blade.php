@@ -60,7 +60,7 @@
                                 <!-- All Products -->
                                 <label class="flex items-center">
                                     <input type="radio" name="category" value="" 
-                                           {{ !request('category') && !isset($currentCategory) ? 'checked' : '' }}
+                                           {{ !request('categoryId') ? 'checked' : '' }}
                                            onchange="filterProducts()"
                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                     <span class="ml-3 text-sm text-gray-700">Tất cả sản phẩm</span>
@@ -74,7 +74,7 @@
                                     @foreach($categories as $category)
                                         <label class="flex items-center">
                                             <input type="radio" name="category" value="{{ $category->category_id }}" 
-                                                   {{ (request('category') == $category->category_id) || (isset($currentCategory) && $currentCategory->category_id == $category->category_id) ? 'checked' : '' }}
+                                                   {{ request('categoryId') == $category->category_id ? 'checked' : '' }}
                                                    onchange="filterProducts()"
                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                             <span class="ml-3 text-sm text-gray-700">{{ $category->category_name }}</span>
@@ -92,8 +92,8 @@
                             <h4 class="text-sm font-medium text-gray-900 mb-3">Khoảng giá</h4>
                             <div class="space-y-2">
                                 @php
-                                    $currentMinPrice = request()->route('minPrice');
-                                    $currentMaxPrice = request()->route('maxPrice');
+                                    $currentMinPrice = request('minPrice');
+                                    $currentMaxPrice = request('maxPrice');
                                     $currentPriceRange = '';
                                     
                                     if ($currentMinPrice !== null && $currentMaxPrice !== null) {
@@ -154,6 +154,7 @@
                                 <label class="flex items-center">
                                     <input type="checkbox" name="in_stock" value="1" 
                                            id="inStockCheckbox"
+                                           {{ request('inStock') === 'true' ? 'checked' : '' }}
                                            onchange="filterProducts()"
                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                     <span class="ml-3 text-sm text-gray-700">Còn hàng</span>
@@ -194,36 +195,27 @@
                             <!-- Sort Options -->
                             <div class="flex items-center space-x-4">
                                 <label class="text-sm font-medium text-gray-700">Sắp xếp:</label>
-                                <select name="sort" onchange="filterProducts()" 
+                                <select name="sort" onchange="handleSortChange(this.value)" 
                                         class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
-                                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
-                                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá tăng dần</option>
-                                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option>
-                                    <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Tên A-Z</option>
+                                    <option value="newest" {{ request('order') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
+                                    <option value="oldest" {{ request('order') == 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
+                                    <option value="priceUp" {{ request('order') == 'priceUp' ? 'selected' : '' }}>Giá tăng dần</option>
+                                    <option value="priceDown" {{ request('order') == 'priceDown' ? 'selected' : '' }}>Giá giảm dần</option>
+                                    <option value="name" {{ request('order') == 'name' ? 'selected' : '' }}>Tên A-Z</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <!-- Current Filters Display -->
-                    @if(request()->hasAny(['category', 'price_range', 'in_stock', 'sort']) || isset($currentCategory) || request()->route('minPrice'))
+                    @if(request()->hasAny(['categoryId', 'minPrice', 'maxPrice', 'inStock', 'order']))
                         <div class="mb-6">
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="text-sm font-medium text-gray-700">Đang lọc:</span>
                                 
-                                @if(isset($currentCategory))
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                        {{ $currentCategory->category_name }}
-                                        <button onclick="removeFilter('category')" class="ml-2 hover:text-blue-600">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                        </button>
-                                    </span>
-                                @elseif(request('category') && isset($categories))
+                                @if(request('categoryId') && isset($categories))
                                     @php
-                                        $currentCategoryFromQuery = $categories->where('category_id', request('category'))->first();
+                                        $currentCategoryFromQuery = $categories->where('category_id', request('categoryId'))->first();
                                     @endphp
                                     @if($currentCategoryFromQuery)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
@@ -237,18 +229,9 @@
                                     @endif
                                 @endif
 
-                                @if(request('price_range'))
+                                @if(request('minPrice') && request('maxPrice'))
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                        Giá: {{ request('price_range') }}
-                                        <button onclick="removeFilter('price_range')" class="ml-2 hover:text-green-600">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                        </button>
-                                    </span>
-                                @elseif(request()->route('minPrice') && request()->route('maxPrice'))
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                        Giá: {{ number_format(request()->route('minPrice')) }}đ - {{ number_format(request()->route('maxPrice')) }}đ
+                                        Giá: {{ number_format(request('minPrice')) }}đ - {{ number_format(request('maxPrice')) }}đ
                                         <button onclick="removeFilter('price_range')" class="ml-2 hover:text-green-600">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -257,10 +240,21 @@
                                     </span>
                                 @endif
 
-                                @if(request('in_stock'))
+                                @if(request('inStock') === 'true')
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
                                         Còn hàng
                                         <button onclick="removeFilter('in_stock')" class="ml-2 hover:text-yellow-600">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </span>
+                                @endif
+
+                                @if(request('order'))
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                                        Sắp xếp: {{ ucfirst(request('order')) }}
+                                        <button onclick="removeFilter('sort')" class="ml-2 hover:text-purple-600">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                             </svg>
@@ -280,311 +274,146 @@
     <script>
         // Khởi tạo trạng thái checkbox khi trang load
         document.addEventListener('DOMContentLoaded', function() {
-            const inStockCheckbox = document.getElementById('inStockCheckbox');
-            const currentUrl = window.location.pathname;
+            const urlParams = new URLSearchParams(window.location.search);
             
-            // Kiểm tra nếu URL có chứa "/inStock" thì check checkbox
-            if (currentUrl.includes('/inStock')) {
+            // Set checkbox states based on URL parameters
+            const inStockCheckbox = document.getElementById('inStockCheckbox');
+            if (urlParams.get('inStock') === 'true') {
                 inStockCheckbox.checked = true;
-            } else {
-                inStockCheckbox.checked = false;
+            }
+            
+            // Set category radio based on URL parameters
+            const categoryId = urlParams.get('categoryId');
+            if (categoryId) {
+                const categoryRadio = document.querySelector(`input[name="category"][value="${categoryId}"]`);
+                if (categoryRadio) {
+                    categoryRadio.checked = true;
+                }
+            }
+            
+            // Set price range radio based on URL parameters
+            const minPrice = urlParams.get('minPrice');
+            const maxPrice = urlParams.get('maxPrice');
+            if (minPrice && maxPrice) {
+                let priceRangeValue = '';
+                if (minPrice == 0 && maxPrice == 500000) {
+                    priceRangeValue = '0-500000';
+                } else if (minPrice == 500000 && maxPrice == 1000000) {
+                    priceRangeValue = '500000-1000000';
+                } else if (minPrice == 1000000 && maxPrice == 2000000) {
+                    priceRangeValue = '1000000-2000000';
+                } else if (minPrice == 2000000 && maxPrice == 999999999) {
+                    priceRangeValue = '2000000+';
+                }
+                
+                if (priceRangeValue) {
+                    const priceRadio = document.querySelector(`input[name="price_range"][value="${priceRangeValue}"]`);
+                    if (priceRadio) {
+                        priceRadio.checked = true;
+                    }
+                }
+            }
+            
+            // Set sort select based on URL parameters
+            const order = urlParams.get('order');
+            const sortSelect = document.querySelector('select[name="sort"]');
+            if (order && sortSelect) {
+                sortSelect.value = order;
             }
         });
 
         function filterProducts() {
-            // Lấy giá trị của các filters
+            // Get current URL parameters to preserve existing filters
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Get current form values
             const category = document.querySelector('input[name="category"]:checked');
             const priceRange = document.querySelector('input[name="price_range"]:checked');
             const inStock = document.querySelector('input[name="in_stock"]:checked');
+            const sortSelect = document.querySelector('select[name="sort"]');
             
-            let baseUrl = '';
-            
-            // Kiểm tra nếu có category được chọn (và không phải "Tất cả sản phẩm")
+            // Start with current parameters
+            let params = new URLSearchParams(window.location.search);
+
+            // Update category
+            params.delete('categoryId');
             if (category && category.value) {
-                // Kiểm tra xem có price range không
-                if (priceRange && priceRange.value) {
-                    let minPrice, maxPrice;
-                    
-                    // Parse price range
-                    switch(priceRange.value) {
-                        case '0-500000':
-                            minPrice = 0;
-                            maxPrice = 500000;
-                            break;
-                        case '500000-1000000':
-                            minPrice = 500000;
-                            maxPrice = 1000000;
-                            break;
-                        case '1000000-2000000':
-                            minPrice = 1000000;
-                            maxPrice = 2000000;
-                            break;
-                        case '2000000+':
-                            minPrice = 2000000;
-                            maxPrice = 999999999;
-                            break;
-                        default:
-                            // Nếu chọn "Tất cả" price, chỉ chuyển đến category
-                            if (inStock) {
-                                baseUrl = '/products/' + category.value + '/inStock';
-                            } else {
-                                baseUrl = '/products/' + category.value;
-                            }
-                            window.location.href = baseUrl;
-                            return;
-                    }
-                    
-                    // Category + Price
-                    if (inStock) {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + category.value + '/inStock';
-                    } else {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + category.value;
-                    }
-                } else {
-                    // Chỉ có category, không có price range
-                    if (inStock) {
-                        baseUrl = '/products/' + category.value + '/inStock';
-                    } else {
-                        baseUrl = '/products/' + category.value;
-                    }
-                }
-                
-                window.location.href = baseUrl;
-                return;
+                params.set('categoryId', category.value);
             }
-            
-            // Nếu chọn "Tất cả sản phẩm" (category value = "")
-            if (category && !category.value) {
-                // Kiểm tra xem có price range không
-                if (priceRange && priceRange.value) {
-                    let minPrice, maxPrice;
-                    
-                    // Parse price range
-                    switch(priceRange.value) {
-                        case '0-500000':
-                            minPrice = 0;
-                            maxPrice = 500000;
-                            break;
-                        case '500000-1000000':
-                            minPrice = 500000;
-                            maxPrice = 1000000;
-                            break;
-                        case '1000000-2000000':
-                            minPrice = 1000000;
-                            maxPrice = 2000000;
-                            break;
-                        case '2000000+':
-                            minPrice = 2000000;
-                            maxPrice = 999999999;
-                            break;
-                        default:
-                            // Nếu chọn "Tất cả" price, về trang chính
-                            if (inStock) {
-                                baseUrl = '/products/inStock';
-                            } else {
-                                baseUrl = '/products';
-                            }
-                            window.location.href = baseUrl;
-                            return;
-                    }
-                    
-                    // Price only
-                    if (inStock) {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/inStock';
-                    } else {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice;
-                    }
-                } else {
-                    // Không có category và không có price
-                    if (inStock) {
-                        baseUrl = '/products/inStock';
-                    } else {
-                        baseUrl = '/products';
-                    }
-                }
-                
-                window.location.href = baseUrl;
-                return;
-            }
-            
-            // Xử lý khi chỉ thay đổi price range mà không thay đổi category
+
+            // Update price range
+            params.delete('minPrice');
+            params.delete('maxPrice');
             if (priceRange && priceRange.value) {
-                let minPrice, maxPrice;
-                
-                // Parse price range
-                switch(priceRange.value) {
+                switch (priceRange.value) {
                     case '0-500000':
-                        minPrice = 0;
-                        maxPrice = 500000;
+                        params.set('minPrice', 0);
+                        params.set('maxPrice', 500000);
                         break;
                     case '500000-1000000':
-                        minPrice = 500000;
-                        maxPrice = 1000000;
+                        params.set('minPrice', 500000);
+                        params.set('maxPrice', 1000000);
                         break;
                     case '1000000-2000000':
-                        minPrice = 1000000;
-                        maxPrice = 2000000;
+                        params.set('minPrice', 1000000);
+                        params.set('maxPrice', 2000000);
                         break;
                     case '2000000+':
-                        minPrice = 2000000;
-                        maxPrice = 999999999;
+                        params.set('minPrice', 2000000);
+                        params.set('maxPrice', 999999999);
                         break;
-                    default:
-                        // Nếu chọn "Tất cả" price, kiểm tra current category
-                        const currentCategoryId = getCurrentCategoryId();
-                        if (currentCategoryId) {
-                            if (inStock) {
-                                baseUrl = '/products/' + currentCategoryId + '/inStock';
-                            } else {
-                                baseUrl = '/products/' + currentCategoryId;
-                            }
-                        } else {
-                            if (inStock) {
-                                baseUrl = '/products/inStock';
-                            } else {
-                                baseUrl = '/products';
-                            }
-                        }
-                        window.location.href = baseUrl;
-                        return;
                 }
-                
-                // Kiểm tra xem đang ở trang category nào
-                const currentCategoryId = getCurrentCategoryId();
-                if (currentCategoryId) {
-                    // Category + Price
-                    if (inStock) {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + currentCategoryId + '/inStock';
-                    } else {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/' + currentCategoryId;
-                    }
-                } else {
-                    // Price only
-                    if (inStock) {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice + '/inStock';
-                    } else {
-                        baseUrl = '/products/' + minPrice + '-' + maxPrice;
-                    }
-                }
-                
-                window.location.href = baseUrl;
-                return;
             }
-            
-            // Chỉ có inStock filter hoặc không có filter nào
-            if (inStock) {
-                // Kiểm tra current URL để build proper inStock URL
-                const currentCategoryId = getCurrentCategoryId();
-                const currentPriceRange = getCurrentPriceRange();
-                
-                if (currentCategoryId && currentPriceRange) {
-                    // Category + Price + InStock
-                    baseUrl = '/products/' + currentPriceRange.minPrice + '-' + currentPriceRange.maxPrice + '/' + currentCategoryId + '/inStock';
-                } else if (currentCategoryId) {
-                    // Category + InStock
-                    baseUrl = '/products/' + currentCategoryId + '/inStock';
-                } else if (currentPriceRange) {
-                    // Price + InStock
-                    baseUrl = '/products/' + currentPriceRange.minPrice + '-' + currentPriceRange.maxPrice + '/inStock';
-                } else {
-                    // Just InStock
-                    baseUrl = '/products/inStock';
-                }
-            } else {
-                // No inStock, fallback to current page or products
-                baseUrl = '/products';
+
+            // Update in stock
+            params.delete('inStock');
+            if (inStock && inStock.checked) {
+                params.set('inStock', 'true');
             }
-            
-            window.location.href = baseUrl;
+
+            // Update sort/order
+            params.delete('order');
+            if (sortSelect && sortSelect.value && sortSelect.value !== 'newest') {
+                params.set('order', sortSelect.value);
+            }
+
+            window.location.href = '/products?' + params.toString();
         }
-        
+
+        // Đổi hàm onchange của select sort:
+        function handleSortChange(value) {
+            filterProducts();
+        }
+
         function clearFilters() {
             window.location.href = '/products';
         }
         
         function removeFilter(filterName) {
-            if (filterName === 'category') {
-                // If removing category filter, check if we have price range or inStock
-                const path = window.location.pathname;
-                const priceRangeMatch = path.match(/\/products\/(\d+)-(\d+)/);
-                const isInStock = path.includes('/inStock');
-                
-                if (priceRangeMatch) {
-                    // We have price range, keep it
-                    if (isInStock) {
-                        window.location.href = '/products/' + priceRangeMatch[1] + '-' + priceRangeMatch[2] + '/inStock';
-                    } else {
-                        window.location.href = '/products/' + priceRangeMatch[1] + '-' + priceRangeMatch[2];
-                    }
-                } else {
-                    // No price range, check inStock only
-                    if (isInStock) {
-                        window.location.href = '/products/inStock';
-                    } else {
-                        window.location.href = '/products';
-                    }
-                }
-                return;
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            switch(filterName) {
+                case 'category':
+                    urlParams.delete('categoryId');
+                    break;
+                case 'price_range':
+                    urlParams.delete('minPrice');
+                    urlParams.delete('maxPrice');
+                    break;
+                case 'in_stock':
+                    urlParams.delete('inStock');
+                    break;
+                case 'sort':
+                    urlParams.delete('order');
+                    break;
             }
             
-            if (filterName === 'price_range') {
-                // If removing price filter, check if we're on a category page or inStock
-                const path = window.location.pathname;
-                const isInStock = path.includes('/inStock');
-                
-                // Check for category in price range URL: /products/{price}/{category}
-                const categoryWithPriceMatch = path.match(/\/products\/\d+-\d+\/(\d+)/);
-                
-                if (categoryWithPriceMatch) {
-                    // We're on category page with price filter, go to category only
-                    if (isInStock) {
-                        window.location.href = '/products/' + categoryWithPriceMatch[1] + '/inStock';
-                    } else {
-                        window.location.href = '/products/' + categoryWithPriceMatch[1];
-                    }
-                } else {
-                    // We're on price-only page, go to all products
-                    if (isInStock) {
-                        window.location.href = '/products/inStock';
-                    } else {
-                        window.location.href = '/products';
-                    }
-                }
-                return;
+            const queryString = urlParams.toString();
+            if (queryString) {
+                window.location.href = '/products?' + queryString;
+            } else {
+                window.location.href = '/products';
             }
-            
-            if (filterName === 'in_stock') {
-                // Remove /inStock from current URL
-                const currentUrl = window.location.pathname;
-                const newUrl = currentUrl.replace('/inStock', '');
-                window.location.href = newUrl || '/products';
-                return;
-            }
-            
-            // For query parameters
-            const url = new URL(window.location);
-            url.searchParams.delete(filterName);
-            window.location.href = url.toString();
-        }
-        
-        function getCurrentCategoryId() {
-            // Get category ID from current URL
-            const path = window.location.pathname;
-            const matches = path.match(/\/products\/(\d+)/);
-            return matches ? matches[1] : null;
-        }
-        
-        function getCurrentPriceRange() {
-            // Get price range from current URL
-            const path = window.location.pathname;
-            const matches = path.match(/\/products\/(\d+)-(\d+)/);
-            if (matches) {
-                return {
-                    minPrice: matches[1],
-                    maxPrice: matches[2]
-                };
-            }
-            return null;
         }
     </script>
 </body>

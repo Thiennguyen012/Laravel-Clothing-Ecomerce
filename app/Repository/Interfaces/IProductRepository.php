@@ -11,4 +11,7 @@ interface IProductRepository extends IBaseRepository
     public function getProductInAmount($categoryId = null, $minPrice, $maxPrice);
     public function getProductInStock($categoryId = null);
     public function sortProduct($categoryId = null, array $conditions = []);
+
+    // hàm filter
+    public function filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
 }

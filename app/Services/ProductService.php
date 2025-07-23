@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repository\Interfaces\IProductRepository;
 use App\Repository\ProductRepository;
 use App\Services\Interfaces\IProductService;
+use Illuminate\Http\Request;
 
 class ProductService implements IProductService
 {
@@ -56,6 +57,12 @@ class ProductService implements IProductService
     {
         $conditions = ['update_at' => 'asc'];
         $result = $this->productRepository->sortProduct($categoryId, $conditions);
+        return $result;
+    }
+
+    public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
+    {
+        $result = $this->productRepository->filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
         return $result;
     }
 }

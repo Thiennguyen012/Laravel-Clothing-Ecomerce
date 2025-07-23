@@ -20,14 +20,21 @@ class ProductController extends Controller
         $this->variantService = $variantService;
     }
 
-    public function showAll()
+    public function showAll(Request $request)
     {
+        // lấy thông tin từ request
+        $categoryId = $request->input('categoryId');
+        $minPrice = $request->input('minPrice');
+        $maxPrice = $request->input('maxPrice');
+        $inStock = $request->input('inStock');
+        $order = $request->input('order');
+
         // Lấy tất cả categories
         $categories = $this->categoryService->listCategory();
 
         // Lấy products với filters
-        $products = $this->productService->getProductWithVariant();
-
+        // $products = $this->productService->getProductWithVariant();
+        $products = $this->productService->filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
         // Count total products
         $totalProducts = $products->count();
 
