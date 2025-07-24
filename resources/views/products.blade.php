@@ -5,6 +5,88 @@
         </h2>
     </x-slot>
 
+    <style>
+        .product-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        
+        .sticky-cart-button {
+            transition: all 0.3s ease;
+        }
+        
+        .sticky-cart-button:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Notification styles */
+        .notification-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .notification-enter-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-exit {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .notification-exit-active {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        /* Loading button animation */
+        .loading-btn {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .loading-btn::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Cart count animation */
+        .cart-count-bounce {
+            animation: bounce 0.5s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-4 lg:gap-8">
@@ -475,11 +557,209 @@
 
         // Function to handle add to cart
         function addToCart(productId) {
-            // Tạm thời hiển thị thông báo, sau này có thể kết nối với API
-            alert('Chức năng thêm vào giỏ hàng sẽ được phát triển sau!\nProduct ID: ' + productId);
+            // Hiển thị loading
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Đang thêm...';
+            button.disabled = true;
             
-            // TODO: Implement add to cart functionality
+            // Lấy CSRF token
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // Lấy variant_id đầu tiên của product (tạm thời)
+            // Trong thực tế cần modal để user chọn size/color
+            const variantId = productId; // Tạm thời dùng productId làm variantId
+            const price = 150000; // Tạm thời dùng giá cố định
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    variant_id: variantId,
+                    quantity: 1,
+                    price: price
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Add to cart response:', data); // Debug log
+                if (data.success) {
+                    // Hiển thị thông báo thành công
+                    showNotification('success', data.message);
+                    
+                    // Cập nhật cart count trong sticky button
+                    updateCartCount(data.cart_count);
+                } else {
+                    console.error('Add to cart failed:', data); // Debug log
+                    showNotification('error', data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Add to cart error:', error);
+                showNotification('error', 'Không thể thêm sản phẩm vào giỏ hàng');
+            })
+            .finally(() => {
+                // Khôi phục button
+                button.textContent = originalText;
+                button.disabled = false;
+            });
         }
+
+        // Function to show notification
+        function showNotification(type, message) {
+            // Tạo notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
+            
+            if (type === 'success') {
+                notification.className += ' bg-green-500 text-white';
+            } else {
+                notification.className += ' bg-red-500 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        ${type === 'success' ? 
+                            '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' :
+                            '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>'
+                        }
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium">${message}</p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="text-white hover:text-gray-200">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Thêm vào DOM
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Function to update cart count in sticky button
+        function updateCartCount(count) {
+            const cartBadge = document.getElementById('cart-count-badge');
+            const cartTooltip = document.getElementById('cart-tooltip');
+            
+            if (cartBadge) {
+                cartBadge.textContent = count > 99 ? '99+' : count;
+                cartBadge.classList.add('cart-count-bounce');
+                
+                if (count > 0) {
+                    cartBadge.style.display = 'flex';
+                } else {
+                    cartBadge.style.display = 'none';
+                }
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    cartBadge.classList.remove('cart-count-bounce');
+                }, 500);
+            }
+            
+            // Update tooltip
+            if (cartTooltip) {
+                if (count > 0) {
+                    cartTooltip.textContent = `Giỏ hàng (${count} sản phẩm)`;
+                } else {
+                    cartTooltip.textContent = 'Giỏ hàng (trống)';
+                }
+            }
+        }
+
+        // Advanced Add to Cart with Variant Selection
+        function addToCartWithModal(productId, variants) {
+            // Tạo modal để user chọn variant
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 overflow-y-auto';
+            modal.innerHTML = `
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
+                    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeModal()"></div>
+                    <div class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+                            Chọn tùy chọn sản phẩm
+                        </h3>
+                        <div id="variant-selection">
+                            <!-- Variant options will be populated here -->
+                        </div>
+                        <div class="mt-6 flex space-x-3">
+                            <button onclick="closeModal()" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                                Hủy
+                            </button>
+                            <button onclick="confirmAddToCart()" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Populate variants (này cần data từ backend)
+            // Tạm thời dùng default variant
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.fixed.inset-0.z-50');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Load cart count when page loads
+        function loadCartCount() {
+            fetch('/cart/count', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cart count response:', data); // Debug log
+                if (data.success) {
+                    updateCartCount(data.count);
+                } else {
+                    console.log('Cart count failed:', data);
+                }
+            })
+            .catch(error => {
+                console.log('Could not load cart count:', error);
+            });
+        }
+
+        // Initialize cart count when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Products page loaded, loading cart count...');
+            loadCartCount();
+        });
 
         // Đổi hàm onchange của select sort:
         function handleSortChange(value) {
