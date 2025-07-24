@@ -66,5 +66,57 @@
 
             @include('layouts.footer')
         </div>
+        <script>
+        // Function to update cart count in sticky button
+        function updateCartCount(count) {
+            const cartBadge = document.getElementById('cart-count-badge');
+            const cartTooltip = document.getElementById('cart-tooltip');
+            if (cartBadge) {
+                cartBadge.textContent = count > 99 ? '99+' : count;
+                cartBadge.classList.add('cart-count-bounce');
+                if (count > 0) {
+                    cartBadge.style.display = 'flex';
+                } else {
+                    cartBadge.style.display = 'none';
+                }
+                setTimeout(() => {
+                    cartBadge.classList.remove('cart-count-bounce');
+                }, 500);
+            }
+            if (cartTooltip) {
+                if (count > 0) {
+                    cartTooltip.textContent = `Giỏ hàng (${count} sản phẩm)`;
+                } else {
+                    cartTooltip.textContent = 'Giỏ hàng (trống)';
+                }
+            }
+        }
+
+        // Load cart count when page loads
+        function loadCartCount() {
+            fetch('/cart/count', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateCartCount(data.count);
+                } else {
+                    updateCartCount(0);
+                }
+            })
+            .catch(error => {
+                updateCartCount(0);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartCount();
+        });
+        </script>
     </body>
 </html>

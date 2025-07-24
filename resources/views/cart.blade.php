@@ -1,9 +1,14 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Giỏ hàng') }}
+        </h2>
+    </x-slot>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-8">Thông tin giỏ hàng</h1>
                     
                     <!-- Cart Items Section -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -125,104 +130,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // Update quantity function
-        function updateQuantity(variantId, newQuantity) {
-            if (newQuantity < 1) return;
-            
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            fetch('/cart/update', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    variant_id: variantId,
-                    quantity: newQuantity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Reload page to update UI
-                    window.location.reload();
-                } else {
-                    alert('Không thể cập nhật số lượng: ' + (data.message || 'Lỗi không xác định'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi cập nhật số lượng');
-            });
-        }
-
-        // Remove item function
-        function removeItem(variantId) {
-            if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-                return;
-            }
-            
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            fetch('/cart/remove', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    variant_id: variantId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Reload page to update UI
-                    window.location.reload();
-                } else {
-                    alert('Không thể xóa sản phẩm: ' + (data.message || 'Lỗi không xác định'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi xóa sản phẩm');
-            });
-        }
-
-        // Clear cart function
-        function clearCart() {
-            if (!confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')) {
-                return;
-            }
-            
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            fetch('/cart/clear', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Reload page to update UI
-                    window.location.reload();
-                } else {
-                    alert('Không thể xóa giỏ hàng: ' + (data.message || 'Lỗi không xác định'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi xóa giỏ hàng');
-            });
-        }
-    </script>
+    @vite(['resources/js/cart.js'])
 </x-app-layout>
