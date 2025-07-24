@@ -14,11 +14,7 @@ class Product extends Model
         'category_id',
         'product_name',
         'description',
-        'price',
-        'images',
-        'is_active',
-        'sku',
-        'stock_quantity'
+        'is_active'
     ];
 
     // Cast certain fields to specific types

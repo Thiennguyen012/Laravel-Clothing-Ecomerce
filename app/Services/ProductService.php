@@ -59,10 +59,16 @@ class ProductService implements IProductService
         $result = $this->productRepository->sortProduct($categoryId, $conditions);
         return $result;
     }
-
+    // filter chính của trang products
     public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
     {
         $result = $this->productRepository->filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
+        return $result;
+    }
+
+    public function getProductDetail($product_id)
+    {
+        $result = $this->productRepository->getProductWithVariantById($product_id);
         return $result;
     }
 }

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id('product_id')->autoIncrement();
             $table->string('product_name');
+            $table->text('description')->nullable(); // Thêm cột description
+            $table->boolean('is_active')->default(true); // Thêm cột trạng thái
             $table->integer('category_id');
             $table->timestamps();
         });

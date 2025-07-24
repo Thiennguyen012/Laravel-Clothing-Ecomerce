@@ -14,34 +14,35 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-50">
-    <!-- Navigation -->
-    @include('layouts.navigation')
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gray-100">
+        <!-- Navigation -->
+        @include('layouts.navigation')
 
-    <!-- Page Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="py-6">
-                <div class="md:flex md:items-center md:justify-between">
-                    <div class="flex-1 min-w-0">
-                        <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                            {{ $pageTitle ?? 'Sản phẩm' }}
-                        </h1>
-                        @if(isset($pageDescription))
-                            <p class="mt-1 text-sm text-gray-500">{{ $pageDescription }}</p>
-                        @endif
-                    </div>
-                    <div class="mt-4 flex md:mt-0 md:ml-4">
-                        @yield('header-actions')
-                    </div>
+        <!-- Page Header -->
+        @hasSection('header')
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    @yield('header')
                 </div>
-            </div>
-        </div>
-    </div>
+            </header>
+        @else
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        {{ $pageTitle ?? 'Sản phẩm' }}
+                    </h2>
+                    @if(isset($pageDescription))
+                        <p class="mt-1 text-sm text-gray-500">{{ $pageDescription }}</p>
+                    @endif
+                </div>
+            </header>
+        @endif
 
-    <!-- Main Content -->
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Main Content -->
+        <main>
+            <div class="py-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-4 lg:gap-8">
                 <!-- Sidebar Filters -->
                 <div class="lg:col-span-1">
@@ -267,7 +268,7 @@
                     @yield('products-content')
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Filter JavaScript -->
