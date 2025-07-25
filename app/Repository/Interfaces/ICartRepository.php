@@ -21,6 +21,8 @@ interface ICartRepository extends IBaseRepository
     // Lấy danh sách cart
     public function getCart($user_id = null, $session_id = null);
 
+    public function getCartWithVariantAndProduct($user_id = null, $session_id = null);
+
     // Đếm số lượng items trong cart
     public function getCartCount($user_id = null, $session_id = null);
 

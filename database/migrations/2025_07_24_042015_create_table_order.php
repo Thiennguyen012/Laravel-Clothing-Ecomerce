@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('order_number')->unique(); // Mã đơn hàng unique
             $table->unsignedBigInteger('user_id')->nullable(); // null nếu là khách vãng lai
             $table->string('session_id')->nullable(); // session của khách vãng lai
 
@@ -39,11 +38,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Quan hệ khóa ngoại
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             // Index để tăng performance
             $table->index(['status', 'created_at']);
-            $table->index('order_number');
             $table->index(['user_id', 'session_id']);
         });
     }

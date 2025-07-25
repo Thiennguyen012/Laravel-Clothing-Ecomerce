@@ -218,6 +218,7 @@
                     <!-- Action Buttons -->
                     <div class="space-y-3">
                         <button type="button" 
+                                onclick="addToCartSingleProduct()"
                                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md transition duration-200 ease-in-out transform hover:scale-105">
                             <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 9H19"></path>
@@ -357,7 +358,32 @@
 
 <!-- Inject variant data for JS -->
 <script>window.variants = @json($product->variants ?? []);</script>
+<!-- Modal thông báo thêm vào giỏ hàng thành công -->
+<div id="addToCartSuccessModal" class="fixed top-8 left-1/2 z-50 -translate-x-1/2 hidden">
+    <div class="flex items-center px-6 py-4 bg-green-500 text-white rounded-xl shadow-lg gap-3 min-w-[320px] animate-fade-in-up">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span class="font-semibold flex-1">Đã thêm sản phẩm vào giỏ hàng</span>
+        <button onclick="closeAddToCartModal()" class="ml-2 text-white hover:text-gray-200 focus:outline-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+</div>
+
 @vite(['resources/js/singleProduct.js'])
+
+<style>
+@keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(30px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fade-in-up {
+    animation: fade-in-up 0.3s cubic-bezier(.4,0,.2,1);
+}
+</style>
 
 <style>
     .aspect-w-1 {

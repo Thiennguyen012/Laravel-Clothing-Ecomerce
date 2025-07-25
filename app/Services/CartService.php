@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Repository\CartRepository;
-use App\Services\interfaces\ICartService;
+use App\Services\Interfaces\ICartService;
 
 class CartService implements ICartService
 {

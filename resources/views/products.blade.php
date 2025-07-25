@@ -6,7 +6,7 @@
         </h2>
     </x-slot>
 
-    <style>
+    {{-- <style>
         .product-card:hover {
             transform: translateY(-5px);
             transition: transform 0.3s ease;
@@ -86,7 +86,7 @@
                 transform: translateY(-5px);
             }
         }
-    </style>
+    </style> --}}
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -401,8 +401,22 @@
                                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors duration-200 text-center">
                                             Xem chi tiết
                                         </a>
-                                        @if($hasStock)
-                                            <button onclick="event.stopPropagation(); addToCart({{ $item->product_id }})"
+                                        @php
+                                            $variantId = null;
+                                            $variantPrice = null;
+                                            $hasAvailableVariant = false;
+                                            if($item->variants && $item->variants->count() > 0) {
+                                                $availableVariants = $item->variants->where('quantity', '>', 0);
+                                                $hasAvailableVariant = $availableVariants->count() > 0;
+                                                $minPriceVariant = $availableVariants->sortBy('price')->first();
+                                                if($minPriceVariant) {
+                                                    $variantId = $minPriceVariant->id ?? $minPriceVariant->variant_id;
+                                                    $variantPrice = $minPriceVariant->price;
+                                                }
+                                            }
+                                        @endphp
+                                        @if((($item->variants && $item->variants->count() > 0 && $hasAvailableVariant) || (!$item->variants || $item->variants->count() == 0)) && $hasStock)
+                                            <button onclick="event.stopPropagation(); addToCart({{ $variantId ? $variantId : $item->product_id }}, {{ $variantPrice !== null ? $variantPrice : $item->price }})"
                                                     class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors duration-200">
                                                 Thêm vào giỏ
                                             </button>
@@ -557,21 +571,16 @@
         }
 
         // Function to handle add to cart
-        function addToCart(productId) {
+        function addToCart(variantId, price) {
             // Hiển thị loading
             const button = event.target;
             const originalText = button.textContent;
             button.textContent = 'Đang thêm...';
             button.disabled = true;
-            
+
             // Lấy CSRF token
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            // Lấy variant_id đầu tiên của product (tạm thời)
-            // Trong thực tế cần modal để user chọn size/color
-            const variantId = productId; // Tạm thời dùng productId làm variantId
-            const price = 150000; // Tạm thời dùng giá cố định
-            
+
             fetch('/cart/add', {
                 method: 'POST',
                 headers: {
@@ -591,8 +600,6 @@
                 if (data.success) {
                     // Hiển thị thông báo thành công
                     showNotification('success', data.message);
-                    
-                    // Cập nhật cart count trong sticky button
                     updateCartCount(data.cart_count);
                 } else {
                     console.error('Add to cart failed:', data); // Debug log
@@ -604,7 +611,6 @@
                 showNotification('error', 'Không thể thêm sản phẩm vào giỏ hàng');
             })
             .finally(() => {
-                // Khôi phục button
                 button.textContent = originalText;
                 button.disabled = false;
             });

@@ -14,4 +14,6 @@ interface IProductRepository extends IBaseRepository
 
     // hàm filter
     public function filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
+    public function decreaseStock($variant_id, $quantity);
+    public function increaseStock($variant_id, $quantity);
 }

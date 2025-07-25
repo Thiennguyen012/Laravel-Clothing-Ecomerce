@@ -22,6 +22,10 @@ class CartRepository extends BaseRepository implements ICartRepository
             return null;
         }
 
+        // Always get price from Variant model
+        $variant = \App\Models\Variant::find($variant_id);
+        $realPrice = $variant ? $variant->price : 0;
+        // $realPrice = $variant->price;
         // Check if variant already exists in cart
         if ($this->hasVariantInCart($user_id, $session_id, $variant_id)) {
             // Update existing quantity
@@ -33,7 +37,8 @@ class CartRepository extends BaseRepository implements ICartRepository
 
             if ($existing_item) {
                 $existing_item->update([
-                    'quantity' => $existing_item->quantity + $quantity
+                    'quantity' => $existing_item->quantity + $quantity,
+                    'price' => $realPrice
                 ]);
                 return $existing_item;
             }
@@ -45,7 +50,7 @@ class CartRepository extends BaseRepository implements ICartRepository
             'session_id' => $session_id,
             'variant_id' => $variant_id,
             'quantity' => $quantity,
-            'price' => $price
+            'price' => $realPrice
         ];
 
         $result = $this->model->create($attributes);
@@ -148,6 +153,23 @@ class CartRepository extends BaseRepository implements ICartRepository
         }
 
         return collect(); // Return empty collection
+    }
+    public function getCartWithVariantAndProduct($user_id = null, $session_id = null)
+    {
+        if (!$user_id && !$session_id) {
+            return collect(); // Return empty collection
+        }
+
+
+        if ($user_id) {
+            return $this->model->with('variant.product')->where('user_id', $user_id)->get();
+        }
+
+        if ($session_id) {
+            return $this->model->with('variant.product')->where('session_id', $session_id)->get();
+        }
+
+        return collect();
     }
     public function getCartCount($user_id = null, $session_id = null)
     {

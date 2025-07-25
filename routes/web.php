@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Route;
 
@@ -64,4 +65,7 @@ Route::delete('/cart/remove', [CartController::class, 'removeItem'])->name('cart
 Route::delete('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
 Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
 
+// checkout routes
+Route::get('/checkout', [OrderController::class, 'getOrderList'])->name('checkout.list');
+Route::post('/checkout', [OrderController::class, 'placeOrder'])->name('checkout');
 require __DIR__ . '/auth.php';

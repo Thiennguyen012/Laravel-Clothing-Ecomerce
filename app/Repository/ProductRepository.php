@@ -115,4 +115,6 @@ class ProductRepository extends BaseRepository implements IProductRepository
 
         return $query->get();
     }
+    public function decreaseStock($variant_id, $quantity) {}
+    public function increaseStock($variant_id, $quantity) {}
 }
