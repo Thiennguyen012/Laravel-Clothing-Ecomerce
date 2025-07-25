@@ -101,12 +101,12 @@
                                         </div>
                                         <div class="flex justify-between text-sm">
                                             <span>Phí vận chuyển:</span>
-                                            <span>30.000đ</span>
+                                            <span>0đ</span>
                                         </div>
                                         <div class="border-t border-gray-200 pt-3">
                                             <div class="flex justify-between text-base font-medium">
                                                 <span>Tổng cộng:</span>
-                                                <span>{{ number_format(($total ?? 0) + 30000, 0, ',', '.') }}đ</span>
+                                                <span>{{ number_format(($total ?? 0) + 0, 0, ',', '.') }}đ</span>
                                             </div>
                                         </div>
                                     </div>

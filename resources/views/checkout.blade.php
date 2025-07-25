@@ -58,6 +58,25 @@
                                 </li>
                             @endforeach
                         </ul>
+                        <div class="mt-4 space-y-2">
+                            @php
+                                $subtotal = collect($cart)->sum(function($item) { return ($item->price ?? $item->unit_price ?? 0) * $item->quantity; });
+                                $shipping_fee = 0;
+                                $total = $subtotal + $shipping_fee;
+                            @endphp
+                            <div class="flex justify-between text-sm">
+                                <span>Tạm tính:</span>
+                                <span>{{ number_format($subtotal, 0, ',', '.') }}đ</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Phí vận chuyển:</span>
+                                <span>{{ number_format($shipping_fee, 0, ',', '.') }}đ</span>
+                            </div>
+                            <div class="flex justify-between text-base font-semibold border-t border-gray-200 pt-2">
+                                <span>Tổng cộng:</span>
+                                <span class="text-blue-700">{{ number_format($total, 0, ',', '.') }}đ</span>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow hover:bg-blue-700 transition">Đặt hàng</button>
                 </form>
