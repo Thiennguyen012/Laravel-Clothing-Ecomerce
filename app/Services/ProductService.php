@@ -32,6 +32,11 @@ class ProductService implements IProductService
         $result = $this->productRepository->getProductWithVariant();
         return $result;
     }
+    public function getProductWithVariantById($product_id)
+    {
+        $result = $this->productRepository->getProductWithVariantById($product_id);
+        return $result;
+    }
     public function getProductWithVariantByCategoryId($id)
     {
         $result = $this->productRepository->getProductWithVariantByCategoryId($id);
@@ -66,6 +71,11 @@ class ProductService implements IProductService
         return $result;
     }
 
+    public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null)
+    {
+        $result = $this->productRepository->adminFilterProducts($categoryId, $inStock, $sort, $direction);
+        return $result;
+    }
     public function getProductDetail($product_id)
     {
         $result = $this->productRepository->getProductWithVariantById($product_id);

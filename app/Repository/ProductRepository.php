@@ -19,7 +19,11 @@ class ProductRepository extends BaseRepository implements IProductRepository
     }
     public function getProductWithVariantById($id)
     {
-        return $this->model->with(['variants', 'category'])->find($id);
+        $product = $this->model->with('category')->find($id);
+        if ($product) {
+            $product->variants_paginated = $product->variants()->paginate(10);
+        }
+        return $product;
     }
     public function getProductWithVariantByCategoryId($id)
     {
@@ -100,6 +104,47 @@ class ProductRepository extends BaseRepository implements IProductRepository
                     break;
                 case 'name':
                     $query = $query->orderBy('product_name', 'asc');
+                    break;
+            }
+        }
+
+        return $query->paginate(12);
+    }
+    public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null)
+    {
+        $query = $this->model->with(['variants', 'category']);
+
+        if ($categoryId) {
+            $query = $query->where('category_id', $categoryId);
+        }
+
+        if ($inStock) {
+            $query = $query->whereHas('variants', function ($q) {
+                $q->where('quantity', '>', 0);
+            });
+        }
+
+        // Sắp xếp
+        if ($sort) {
+            $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+            switch ($sort) {
+                case 'product_id':
+                case 'product_name':
+                case 'is_active':
+                case 'updated_at':
+                    $query = $query->orderBy($sort, $direction);
+                    break;
+                case 'category':
+                    $query = $query->join('categories', 'products.category_id', '=', 'categories.category_id')
+                        ->orderBy('categories.category_name', $direction)
+                        ->select('products.*');
+                    break;
+                case 'price':
+                    // Sắp xếp theo giá nhỏ nhất của variant
+                    $query = $query->orderBy(
+                        DB::raw('(SELECT MIN(price) FROM variants WHERE variants.product_id = products.product_id)'),
+                        $direction
+                    );
                     break;
             }
         }
