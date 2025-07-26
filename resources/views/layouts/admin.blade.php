@@ -14,6 +14,7 @@
                 <span class="font-bold text-xl text-blue-600">Admin Panel</span>
             </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
+                
                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Trang chủ') }}
                 </x-responsive-nav-link>
@@ -25,6 +26,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.users.view')" :active="request()->routeIs('admin.users.view')">
                     {{ __('Quản lý người dùng') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Về Trang web') }}
                 </x-responsive-nav-link>
                 <form method="POST" action="{{ route('logout') }}">
                         @csrf
