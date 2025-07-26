@@ -14,11 +14,21 @@
                 <span class="font-bold text-xl text-blue-600">Admin Panel</span>
             </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
-                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 rounded hover:bg-blue-100 @if(request()->routeIs('admin.dashboard')) bg-blue-200 font-semibold @endif">Dashboard</a>
+               <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                {{ __('Trang chủ') }}
+            </x-responsive-nav-link>
                 <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">Quản lý sản phẩm</a>
                 <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">Quản lý đơn hàng</a>
                 <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">Quản lý người dùng</a>
-                <a href="{{ route('logout') }}" class="block px-4 py-2 rounded hover:bg-red-100 text-red-600">Đăng xuất</a>
+                <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-responsive-nav-link :href="route('logout')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                    </form>
             </nav>
         </aside>
         <!-- Main Content -->
