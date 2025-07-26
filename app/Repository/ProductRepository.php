@@ -106,6 +106,13 @@ class ProductRepository extends BaseRepository implements IProductRepository
 
         return $query->paginate(12);
     }
-    public function decreaseStock($variant_id, $quantity) {}
-    public function increaseStock($variant_id, $quantity) {}
+    public function newProduct($product_name, $description, $is_active, $category_id)
+    {
+        return $this->model->create([
+            'product_name' => $product_name,
+            'description' => $description,
+            'is_active' => $is_active,
+            'category_id' => $category_id,
+        ]);
+    }
 }

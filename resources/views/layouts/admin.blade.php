@@ -15,11 +15,17 @@
             </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                {{ __('Trang chủ') }}
-            </x-responsive-nav-link>
-                <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">Quản lý sản phẩm</a>
-                <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">Quản lý đơn hàng</a>
-                <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">Quản lý người dùng</a>
+                    {{ __('Trang chủ') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.products.view')" :active="request()->routeIs('admin.products.view')">
+                    {{ __('Quản lý sản phẩm') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.orders.view')" :active="request()->routeIs('admin.orders.view')">
+                    {{ __('Quản lý đơn hàng') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.view')" :active="request()->routeIs('admin.users.view')">
+                    {{ __('Quản lý người dùng') }}
+                </x-responsive-nav-link>
                 <form method="POST" action="{{ route('logout') }}">
                         @csrf
 

@@ -71,4 +71,12 @@ class ProductService implements IProductService
         $result = $this->productRepository->getProductWithVariantById($product_id);
         return $result;
     }
+    public function newProduct(Request $request)
+    {
+        $product_name = $request->input('product_name');
+        $description = $request->input('description');
+        $is_active = $request->input('is_active');
+        $category_id = $request->input('category_id');
+        $this->productRepository->newProduct($product_name, $description, $is_active, $category_id);
+    }
 }

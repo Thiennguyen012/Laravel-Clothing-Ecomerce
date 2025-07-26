@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CategoryService;
-use App\Services\ProductService;
-use App\Services\VariantService;
+use App\Services\Interfaces\ICategoryService;
+use App\Services\Interfaces\IProductService;
+use App\Services\Interfaces\IVariantService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,7 +13,7 @@ class ProductController extends Controller
     protected $categoryService;
     protected $variantService;
 
-    public function __construct(ProductService $productService, CategoryService $categoryService, VariantService $variantService)
+    public function __construct(IProductService $productService, ICategoryService $categoryService, IVariantService $variantService)
     {
         $this->productService = $productService;
         $this->categoryService = $categoryService;

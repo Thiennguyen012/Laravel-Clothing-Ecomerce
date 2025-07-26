@@ -50,4 +50,19 @@ require __DIR__ . '/auth.php';
 // admin routes
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/', function () {
+            return view('Admin.adminProducts');
+        })->name('view');
+    });
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', function () {
+            return view('Admin.adminOrders');
+        })->name('view');
+    });
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', function () {
+            return view('Admin.adminUsers');
+        })->name('view');
+    });
 });

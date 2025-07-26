@@ -17,4 +17,6 @@ interface IProductService
 
     public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null);
     public function getProductDetail($product_id);
+
+    public function newProduct(Request $request);
 }

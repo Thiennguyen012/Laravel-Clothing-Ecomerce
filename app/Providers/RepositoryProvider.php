@@ -11,9 +11,11 @@ use App\Repository\CategoryRepository;
 use App\Repository\Interfaces\ICartRepository;
 use App\Repository\Interfaces\IOrderItemRepository;
 use App\Repository\Interfaces\IOrderRepository;
+use App\Repository\Interfaces\IUserRepository;
 use App\Repository\Interfaces\IVariantRepository;
 use App\Repository\OrderItemRepository;
 use App\Repository\OrderRepository;
+use App\Repository\UserRepository;
 use App\Repository\VariantRepository;
 
 class RepositoryProvider extends ServiceProvider
@@ -39,5 +41,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(IOrderRepository::class, OrderRepository::class);
         $this->app->bind(IOrderItemRepository::class, OrderItemRepository::class);
         $this->app->bind(ICartRepository::class, CartRepository::class);
+        $this->app->bind(IUserRepository::class, UserRepository::class);
     }
 }
