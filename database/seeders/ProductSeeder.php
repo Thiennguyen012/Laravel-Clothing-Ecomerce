@@ -76,7 +76,44 @@ class ProductSeeder extends Seeder
                 'category_id' => 5,
                 'created_at' => now(),
                 'updated_at' => now()
-            ]
+            ],
+            // Áo khoác (category_id = 6)
+            [
+                'product_id' => 9,
+                'product_name' => 'Áo khoác Bomber',
+                'category_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'product_id' => 10,
+                'product_name' => 'Áo khoác gió',
+                'category_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            // Phụ kiện (category_id = 7)
+            [
+                'product_id' => 11,
+                'product_name' => 'Mũ lưỡi trai thể thao',
+                'category_id' => 7,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'product_id' => 12,
+                'product_name' => 'Kính râm thời trang',
+                'category_id' => 7,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'product_id' => 13,
+                'product_name' => 'Kính râm thời trang',
+                'category_id' => 7,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
         ];
 
         DB::table('products')->insert($products);

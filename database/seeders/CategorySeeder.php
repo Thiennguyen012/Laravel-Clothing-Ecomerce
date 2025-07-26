@@ -61,6 +61,14 @@ class CategorySeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'category_id' => 7,
+                'category_name' => 'Phụ kiện',
+                'description' => 'Phụ kiện thời trang năng động, phù hợp với mọi outfit',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         ];
 

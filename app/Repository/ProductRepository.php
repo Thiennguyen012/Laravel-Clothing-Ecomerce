@@ -15,7 +15,7 @@ class ProductRepository extends BaseRepository implements IProductRepository
     }
     public function getProductWithVariant()
     {
-        return $this->model->with(['variants', 'category'])->get();
+        return $this->model->with(['variants', 'category'])->paginate(12);
     }
     public function getProductWithVariantById($id)
     {
@@ -23,27 +23,18 @@ class ProductRepository extends BaseRepository implements IProductRepository
     }
     public function getProductWithVariantByCategoryId($id)
     {
-        return $this->model->where('category_id', $id)->with(['variants', 'category'])->get();
+        return $this->model->where('category_id', $id)->with(['variants', 'category'])->paginate(12);
     }
     public function getProductInAmount($categoryId = null, $minPrice, $maxPrice)
     {
-        // $query = $this->model->with([
-        //     'variants' => function ($q) use ($minPrice, $maxPrice) {
-        //         // Chỉ load variants trong khoảng giá được lọc
-        //         $q->whereBetween('price', [$minPrice, $maxPrice]);
-        //     },
-        //     'category'
-        // ]);
         $query = $this->model;
         if ($categoryId != null) {
             $query = $query->where('category_id', $categoryId);
         }
-
         // Lấy products có ít nhất 1 variant trong khoảng giá
         $result = $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
             $q->whereBetween('price', [$minPrice, $maxPrice]);
-        })->get();
-
+        })->paginate(12);
         return $result;
     }
     public function getProductInStock($categoryId = null)
@@ -54,7 +45,7 @@ class ProductRepository extends BaseRepository implements IProductRepository
         }
         $result = $query->whereHas('variants', function ($q) {
             $q->where('price', '>', 0);
-        })->get();
+        })->paginate(12);
         return $result;
     }
     public function sortProduct($categoryId = null, array $conditions = [])
@@ -113,7 +104,7 @@ class ProductRepository extends BaseRepository implements IProductRepository
             }
         }
 
-        return $query->get();
+        return $query->paginate(12);
     }
     public function decreaseStock($variant_id, $quantity) {}
     public function increaseStock($variant_id, $quantity) {}

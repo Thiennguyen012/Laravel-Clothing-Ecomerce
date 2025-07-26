@@ -37,7 +37,7 @@ class ProductController extends Controller
         $products = $this->productService->filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
         // Count total products
         $totalProducts = $products->count();
-
+        // dd($categories);
         return view('products', compact('products', 'categories', 'totalProducts'));
     }
 
