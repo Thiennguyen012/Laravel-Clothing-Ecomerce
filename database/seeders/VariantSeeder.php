@@ -331,6 +331,34 @@ class VariantSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+            [
+                'product_id' => 13,
+                'sku' => 'VONG-TAY-THOI-TRANG-XANH',
+                'color' => 'Xanh',
+                'size' => 'M',
+                'price' => 100000.00,
+                'compare_at_price' => 150000.00,
+                'quantity' => 50,
+                'is_active' => true,
+                'images' => 'variants/vong-tay-thoi-trang-xanh.jpg',
+                'description' => 'Vòng tay thời trang màu xanh',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'product_id' => 13,
+                'sku' => 'VONG-TAY-THOI-TRANG-DEN',
+                'color' => 'Đen',
+                'size' => 'M',
+                'price' => 100000.00,
+                'compare_at_price' => 150000.00,
+                'quantity' => 50,
+                'is_active' => true,
+                'images' => 'variants/vong-tay-thoi-trang-den.jpg',
+                'description' => 'Vòng tay thời trang màu den',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
         ];
 
         DB::table('variants')->insert($variants);

@@ -77,7 +77,7 @@ class ProductSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-            // Áo khoác (category_id = 6)
+            // Áo khoác (category_id = 9)
             [
                 'product_id' => 9,
                 'product_name' => 'Áo khoác Bomber',
@@ -109,7 +109,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'product_id' => 13,
-                'product_name' => 'Kính râm thời trang',
+                'product_name' => 'Vòng tay thời trang',
                 'category_id' => 7,
                 'created_at' => now(),
                 'updated_at' => now()

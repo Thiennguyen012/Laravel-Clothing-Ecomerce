@@ -29,7 +29,16 @@ class ProductDescriptionSeeder extends Seeder
 
             'Đầm midi hoa nhí' => 'Đầm midi họa tiết hoa nhí nữ tính và dễ thương. Chất liệu voan mềm mại, thoáng mát. Thiết kế dáng suông vừa vặn, phù hợp cho các buổi dạo phố, đi làm hoặc dự tiệc nhẹ. Tạo vẻ ngoài thanh lịch và nữ tính.',
 
-            'Đầm công sở' => 'Đầm công sở thanh lịch, chất liệu cao cấp chống nhăn. Thiết kế đơn giản nhưng tinh tế, phù hợp cho môi trường công sở chuyên nghiệp. Form đầm ôm vừa vặn, tôn dáng và tạo vẻ ngoài tự tin.'
+            'Đầm công sở' => 'Đầm công sở thanh lịch, chất liệu cao cấp chống nhăn. Thiết kế đơn giản nhưng tinh tế, phù hợp cho môi trường công sở chuyên nghiệp. Form đầm ôm vừa vặn, tôn dáng và tạo vẻ ngoài tự tin.',
+
+            'Áo khoác Bomber' => 'Áo khoác bomber dày dặn, kiểu dáng trẻ trung',
+
+            'Áo khoác gió' => 'Áo khoác gió thoáng mát, đa dạng mẫu mã, phù hợp với mọi lứa tuổi',
+
+            'Mũ lưỡi trai thể thao' => 'Mũ lưỡi trai thể thao năng động, phù hợp với những hoạt động ngoài trời',
+
+            'Kính râm thời trang' => 'Kính râm thời trang sang trọng, chất liệu cao cấp'
+
         ];
 
         // Cập nhật description cho các sản phẩm hiện có

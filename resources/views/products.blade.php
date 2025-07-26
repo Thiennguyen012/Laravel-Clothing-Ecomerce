@@ -134,10 +134,41 @@
         @endforeach
     </div>
 
+
     <!-- Pagination -->
-    <div class="mt-8 flex justify-center">
-        {{ $products->links() }}
-    </div>
+    @if ($products->hasPages())
+        <div class="mt-8 flex flex-col items-center">
+            <div class="flex items-center space-x-2">
+                {{-- Previous Page Link --}}
+                @if ($products->onFirstPage())
+                    <span class="px-3 py-2 rounded-md bg-gray-200 text-gray-400 cursor-not-allowed">&lt;</span>
+                @else
+                    <a href="{{ $products->previousPageUrl() }}" class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-blue-100 transition">&lt;</a>
+                @endif
+
+                {{-- Pagination Elements --}}
+                @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                    @if ($page == $products->currentPage())
+                        <span class="px-3 py-2 rounded-md bg-blue-600 text-white font-semibold border border-blue-600">{{ $page }}</span>
+                    @else
+                        <a href="{{ $url }}" class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-blue-100 transition">{{ $page }}</a>
+                    @endif
+                @endforeach
+
+                {{-- Next Page Link --}}
+                @if ($products->hasMorePages())
+                    <a href="{{ $products->nextPageUrl() }}" class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-blue-100 transition">&gt;</a>
+                @else
+                    <span class="px-3 py-2 rounded-md bg-gray-200 text-gray-400 cursor-not-allowed">&gt;</span>
+                @endif
+            </div>
+            <div class="mt-2 text-sm text-gray-500">
+                Hiển thị {{ ($products->currentPage() - 1) * $products->perPage() + 1 }}
+                đến {{ ($products->currentPage() - 1) * $products->perPage() + $products->count() }}
+                trong tổng số {{ $products->total() }} sản phẩm
+            </div>
+        </div>
+    @endif
 
     <!-- Empty State -->
     @if($products->isEmpty())
