@@ -160,4 +160,13 @@ class ProductRepository extends BaseRepository implements IProductRepository
             'category_id' => $category_id,
         ]);
     }
+    public function updateProduct($product_id, $product_name, $description, $is_active, $category_id)
+    {
+        return $this->model->where('product_id', $product_id)->update([
+            'product_name' => $product_name,
+            'description' => $description,
+            'is_active' => $is_active,
+            'category_id' => $category_id,
+        ]);
+    }
 }

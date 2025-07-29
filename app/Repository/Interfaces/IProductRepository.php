@@ -16,4 +16,5 @@ interface IProductRepository extends IBaseRepository
     public function filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
     public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null);
     public function newProduct($product_name, $description, $is_active, $category_id);
+    public function updateProduct($product_id, $product_name, $description, $is_active, $category_id);
 }

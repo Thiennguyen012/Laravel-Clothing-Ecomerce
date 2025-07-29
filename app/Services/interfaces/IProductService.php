@@ -21,4 +21,5 @@ interface IProductService
     public function getProductDetail($product_id);
 
     public function newProduct(Request $request);
+    public function updateProduct(Request $request);
 }

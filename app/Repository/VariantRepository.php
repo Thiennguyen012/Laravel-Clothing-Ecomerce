@@ -35,4 +35,37 @@ class VariantRepository extends BaseRepository implements IVariantRepository
         $variant->save();
         return true;
     }
+    public function getListVariant()
+    {
+        $variants = $this->model->get();
+        return $variants;
+    }
+    public function variantFilter($product_id = null, $sort = null, $direction = null)
+    {
+        $query = $this->model->with(['product']);
+        if ($product_id) {
+            $query = $query->where('product_id', $product_id);
+        }
+        if ($sort) {
+            $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+            switch ($sort) {
+                case 'price':
+                case 'quantity':
+                case 'sku':
+                case 'size':
+                case 'color':
+                case 'is_active':
+                case 'updated_at':
+                    $query = $query->orderBy($sort, $direction);
+                    break;
+                case 'category':
+                    $query = $query->join('products', 'variants.product_id', '=', 'products.product_id')
+                        ->join('categories', 'products.category_id', '=', 'categories.category_id')
+                        ->orderBy('categories.category_name', $direction)
+                        ->select('variants.*');
+                    break;
+            }
+        }
+        return $query->paginate(12);
+    }
 }

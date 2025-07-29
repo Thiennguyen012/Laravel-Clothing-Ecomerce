@@ -20,4 +20,13 @@ class VariantService implements IVariantService
         $variant = $this->variantRepository->getVariantByProductId($id);
         return $variant;
     }
+    public function getListVariant()
+    {
+        return $this->variantRepository->getListVariant();
+    }
+    public function variantFilter($product_id = null, $sort = null, $direction = null)
+    {
+        $result =  $this->variantRepository->variantFilter($product_id, $sort, $direction);
+        return $result;
+    }
 }

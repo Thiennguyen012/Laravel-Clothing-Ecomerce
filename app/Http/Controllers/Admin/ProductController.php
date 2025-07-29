@@ -55,9 +55,24 @@ class ProductController extends Controller
     public function newProduct(Request $request)
     {
         $this->productService->newProduct($request);
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã thêm sản phẩm mới thành công !'
-        ]);
+        return redirect()->back()->with('success', 'Đã thêm sản phẩm thành công');
     }
+    public function showNewProduct(Request $request)
+    {
+        $categories = $this->categoryService->listCategory();
+        return view('Admin.adminNewProduct', compact('categories'));
+    }
+    public function updateProduct(Request $request)
+    {
+        $this->productService->updateProduct($request);
+        return redirect()->back()->with('success', 'Cập nhật thành công!');
+    }
+    public function showUpdateProduct($id)
+    {
+        // $product_id = $request->input('id');
+        $categories = $this->categoryService->listCategory();
+        $product = $this->productService->getProductWithVariantById($id);
+        return view('Admin.adminUpdateProduct', compact('product', 'categories'));
+    }
+    public function updateVariant(Request $request) {}
 }

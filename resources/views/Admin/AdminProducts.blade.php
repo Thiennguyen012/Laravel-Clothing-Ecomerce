@@ -1,28 +1,37 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container mx-auto py-8">
-    <h1 class="text-2xl font-bold mb-6">Quản lý sản phẩm</h1>
 
-    <!-- Bộ lọc theo danh mục -->
-    <form method="GET" action="" class="mb-6 flex flex-wrap items-end gap-4">
-        <div>
-            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-            <select name="categoryId" id="category" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 min-w-[180px]">
-                <option value="">Tất cả</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat->category_id }}" {{ request('categoryId') == $cat->category_id ? 'selected' : '' }}>
-                        {{ $cat->category_name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="flex items-end h-full">
-            <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition shadow min-w-[90px] justify-center">
-                Lọc
-            </button>
-        </div>
-    </form>
+<div class="container mx-auto py-8">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold mb-4">Quản lý sản phẩm</h1>
+        <form method="GET" action="" class="flex flex-wrap items-end gap-4">
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
+                <select name="categoryId" id="category" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 min-w-[180px]">
+                    <option value="">Tất cả</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->category_id }}" {{ request('categoryId') == $cat->category_id ? 'selected' : '' }}>
+                            {{ $cat->category_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-end h-full gap-2">
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition shadow min-w-[90px] justify-center">
+                    Lọc
+                </button>
+                <a href="{{ route('admin.products.newProduct') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                    <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Thêm sản phẩm mới
+                </a>
+            </div>
+        </form>
+    </div>
+
+
 
     <!-- Bảng danh sách sản phẩm -->
     <div class="bg-white shadow rounded-lg overflow-x-auto">
@@ -115,7 +124,7 @@
                         </td>
                         <td class="px-4 py-2">{{ $product->updated_at->format('d/m/Y H:i') }}</td>
                         <td class="px-4 py-2">
-                            <a href="#" class="text-blue-600 hover:underline mr-2">Sửa</a>
+                            <a href="{{ route('admin.products.updateProduct', ['id' => $product->product_id]) }}" class="text-blue-600 hover:underline mr-2">Sửa</a>
                             <a href="#" class="text-red-600 hover:underline">Xóa</a>
                         </td>
                     </tr>
