@@ -36,6 +36,7 @@ class VariantService implements IVariantService
     }
     public function updateVariant(Request $request)
     {
+
         $variant_id = $request->input('variant_id');
         $product_id = $request->input('product_id');
         $sku = $request->input('sku');
@@ -47,6 +48,7 @@ class VariantService implements IVariantService
         $is_active = $request->input('is_active');
         $images = $request->input('images');
         $description = $request->input('description');
+        // dd($variant_id, $description);
         return $this->variantRepository->updateVariant($variant_id, $product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description);
     }
 }

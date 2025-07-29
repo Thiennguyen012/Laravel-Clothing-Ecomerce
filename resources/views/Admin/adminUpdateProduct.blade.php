@@ -30,11 +30,11 @@
         <input type="hidden" name="product_id" value="{{ $product->product_id }}">
         <div class="mb-4">
             <label for="product_name" class="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
-            <input type="text" name="product_name" id="product_name" value="{{ old('product_name', $product->product_name) }}" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" name="product_name" id="product_name" value="{{ old('product_name', $product->product_name) }}" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2 px-3 py-2">
         </div>
         <div class="mb-4">
             <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-            <select name="category_id" id="category_id" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500">
+            <select name="category_id" id="category_id" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
                 @foreach($categories as $cat)
                     <option value="{{ $cat->category_id }}" {{ $product->category_id == $cat->category_id ? 'selected' : '' }}>{{ $cat->category_name }}</option>
                 @endforeach
@@ -42,11 +42,11 @@
         </div>
         <div class="mb-4">
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
-            <textarea name="description" id="description" rows="4" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500">{{ old('description', $product->description) }}</textarea>
+            <textarea name="description" id="description" rows="4" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">{{ old('description', $product->description) }}</textarea>
         </div>
         <div class="mb-4">
             <label for="is_active" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
-            <select name="is_active" id="is_active" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500">
+            <select name="is_active" id="is_active" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
                 <option value="1" {{ $product->is_active ? 'selected' : '' }}>Hiển thị</option>
                 <option value="0" {{ !$product->is_active ? 'selected' : '' }}>Ẩn</option>
             </select>

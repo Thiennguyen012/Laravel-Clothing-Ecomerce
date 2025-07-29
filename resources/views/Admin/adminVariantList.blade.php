@@ -76,7 +76,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($variants as $variant)
                     <tr>
-                        <td class="px-4 py-2">{{ $variant->variant_id ?? $variant->id }}</td>
+                        <td class="px-4 py-2">{{ $variant->id }}</td>
                         <td class="px-4 py-2">{{ $variant->sku ?? '-' }}</td>
                         <td class="px-4 py-2">{{ $variant->color ?? '-' }}</td>
                         <td class="px-4 py-2">{{ $variant->size ?? '-' }}</td>
@@ -91,7 +91,7 @@
                         </td>
                         <td class="px-4 py-2">{{ $variant->updated_at ? $variant->updated_at->format('d/m/Y H:i') : '-' }}</td>
                         <td class="px-4 py-2">
-                            <a href="#" class="text-blue-600 hover:underline mr-2">Sửa</a>
+                            <a href="{{ route('admin.variants.updateVariant',['id' => $variant->id]) }}" class="text-blue-600 hover:underline mr-2">Sửa</a>
                             <a href="#" class="text-red-600 hover:underline">Xóa</a>
                         </td>
                     </tr>

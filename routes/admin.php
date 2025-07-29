@@ -19,9 +19,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
             Route::get('/edit', [ProductController::class, 'showUpdateProduct'])->name('updateProduct');
             Route::post('/edit', [ProductController::class, 'updateProduct'])->name('update');
         });
-        Route::prefix('variant')->group(function () {
-            Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
-        });
+    });
+    Route::prefix('variant')->name('variants.')->group(function () {
+        Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
+        Route::post('/{id}', [VariantController::class, 'updateVariant'])->name('update');
     });
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', function () {
