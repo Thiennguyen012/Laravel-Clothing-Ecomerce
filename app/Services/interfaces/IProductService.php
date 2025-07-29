@@ -17,7 +17,7 @@ interface IProductService
     public function sortProductOldest($categoryId = null);
 
     public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null);
-    public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null);
+    public function adminFilterProducts($categoryId = null, $inStock = null, $product_name =  null, $sort = null, $direction = null);
     public function getProductDetail($product_id);
 
     public function newProduct(Request $request);

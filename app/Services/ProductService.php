@@ -71,9 +71,9 @@ class ProductService implements IProductService
         return $result;
     }
 
-    public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null)
+    public function adminFilterProducts($categoryId = null, $inStock = null, $product_name = null, $sort = null, $direction = null)
     {
-        $result = $this->productRepository->adminFilterProducts($categoryId, $inStock, $sort, $direction);
+        $result = $this->productRepository->adminFilterProducts($categoryId, $inStock, $product_name, $sort, $direction);
         return $result;
     }
     public function getProductDetail($product_id)

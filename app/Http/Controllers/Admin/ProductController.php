@@ -32,6 +32,7 @@ class ProductController extends Controller
         // lấy thông tin từ request
         $categoryId = $request->input('categoryId');
         $inStock = $request->input('inStock');
+        $product_name = $request->input('product_name');
         $sort = $request->input('sort');
         $direction = $request->input('direction');
 
@@ -40,7 +41,7 @@ class ProductController extends Controller
 
         // Lấy products với filters
         // $products = $this->productService->getProductWithVariant();
-        $products = $this->productService->AdminFilterProducts($categoryId, $inStock, $sort, $direction);
+        $products = $this->productService->AdminFilterProducts($categoryId, $inStock, $product_name, $sort, $direction);
         // Count total products
         $totalProducts = $products->count();
         // dd($products);
@@ -78,7 +79,8 @@ class ProductController extends Controller
         $product = $this->productService->getProductWithVariantById($id);
         return view('Admin.adminUpdateProduct', compact('product', 'categories'));
     }
-    public function deleteProduct($product_id) {
+    public function deleteProduct($product_id)
+    {
         $this->productService->deleteProduct($product_id);
         return redirect()->back()->with('success', 'Xóa thành công!');
     }

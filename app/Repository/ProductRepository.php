@@ -110,7 +110,7 @@ class ProductRepository extends BaseRepository implements IProductRepository
 
         return $query->paginate(12);
     }
-    public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null)
+    public function adminFilterProducts($categoryId = null, $inStock = null, $product_name = null, $sort = null, $direction = null)
     {
         $query = $this->model->with(['variants', 'category']);
 
@@ -122,6 +122,9 @@ class ProductRepository extends BaseRepository implements IProductRepository
             $query = $query->whereHas('variants', function ($q) {
                 $q->where('quantity', '>', 0);
             });
+        }
+        if ($product_name) {
+            $query = $query->where('product_name', 'like', "%$product_name%");
         }
 
         // Sắp xếp
