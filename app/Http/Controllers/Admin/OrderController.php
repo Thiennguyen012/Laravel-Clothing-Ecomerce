@@ -23,9 +23,9 @@ class OrderController extends Controller
         // dd($orders);
         return view('Admin.adminOrders', compact('orders'));
     }
-    public function findOrderByCustomerName(Request $request)
+    public function getOrderDetail($order_id)
     {
-        $orders = $this->orderService->findOrderByCustomerName($request);
-        return 1;
+        $orderDetail = $this->orderService->getOrderWithItemsById($order_id);
+        return view('Admin.adminOrderDetail', compact('orderDetail'));
     }
 }

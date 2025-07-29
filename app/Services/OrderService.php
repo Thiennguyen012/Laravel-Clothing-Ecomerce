@@ -118,4 +118,9 @@ class OrderService implements IOrderService
         $customer_name = $request->input('customer_name');
         return $this->orderRepository->findOrderByCustomerName($customer_name);
     }
+    public function getOrderWithItemsById($order_id)
+    {
+        $result = $this->orderRepository->getOrderWithItemsById($order_id);
+        return $result;
+    }
 }

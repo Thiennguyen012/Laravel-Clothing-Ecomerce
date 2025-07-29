@@ -18,4 +18,5 @@ interface IOrderRepository extends IBaseRepository
         $sort = null,
         $direction = null,
     );
+    public function getOrderWithItemsById($order_id);
 }

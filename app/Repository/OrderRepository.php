@@ -93,4 +93,9 @@ class OrderRepository extends BaseRepository implements IOrderRepository
         }
         return $query->paginate(12);
     }
+    public function getOrderWithItemsById($order_id)
+    {
+        $result = $this->model->with('items')->where('id', $order_id)->first();
+        return $result;
+    }
 }
