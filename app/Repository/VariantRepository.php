@@ -73,6 +73,21 @@ class VariantRepository extends BaseRepository implements IVariantRepository
         }
         return $query->paginate(12);
     }
+    public function newVariant($product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description)
+    {
+        return $this->model->create([
+            'product_id' => $product_id,
+            'sku' => $sku,
+            'color' => $color,
+            'size' => $size,
+            'price' => $price,
+            'compare_at_price' => $compare_at_price,
+            'quantity' => $quantity,
+            'is_active' => $is_active,
+            'images' => $images,
+            'description' => $description
+        ]);
+    }
     public function updateVariant($variant_id, $product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description)
     {
         $this->model->where('id', $variant_id)->update([
@@ -87,5 +102,9 @@ class VariantRepository extends BaseRepository implements IVariantRepository
             'images' => $images,
             'description' => $description
         ]);
+    }
+    public function deleteVariant($variant_id)
+    {
+        return $this->model->where('id', $variant_id)->delete();
     }
 }

@@ -34,6 +34,20 @@ class VariantService implements IVariantService
         $result =  $this->variantRepository->variantFilter($product_id, $sort, $direction);
         return $result;
     }
+    public function newVariant(Request $request)
+    {
+        $product_id = $request->input('product_id');
+        $sku = $request->input('sku');
+        $color = $request->input('color');
+        $size = $request->input('size');
+        $price = $request->input('price');
+        $compare_at_price = $request->input('compare_at_price');
+        $quantity = $request->input('quantity');
+        $is_active = $request->input('is_active');
+        $images = $request->input('images');
+        $description = $request->input('description');
+        return $this->variantRepository->newVariant($product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description);
+    }
     public function updateVariant(Request $request)
     {
 
@@ -50,5 +64,9 @@ class VariantService implements IVariantService
         $description = $request->input('description');
         // dd($variant_id, $description);
         return $this->variantRepository->updateVariant($variant_id, $product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description);
+    }
+    public function deleteVariant($variant_id)
+    {
+        return $this->variantRepository->deleteVariant($variant_id);
     }
 }

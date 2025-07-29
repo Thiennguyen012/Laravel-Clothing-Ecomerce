@@ -11,5 +11,7 @@ interface IVariantRepository extends IBaseRepository
     public function increaseStock($variant_id, $quantity);
     public function getListVariant();
     public function variantFilter($product_id = null, $sort = null, $direction = null);
+    public function newVariant($product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description);
     public function updateVariant($variant_id, $product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description);
+    public function deleteVariant($variant_id);
 }

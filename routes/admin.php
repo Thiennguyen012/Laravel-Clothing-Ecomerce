@@ -21,8 +21,11 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         });
     });
     Route::prefix('variant')->name('variants.')->group(function () {
+        Route::get('/new', [VariantController::class, 'showNewVariant'])->name('newVariant');
+        Route::post('/new', [VariantController::class, 'newVariant'])->name('store');
         Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
         Route::post('/{id}', [VariantController::class, 'updateVariant'])->name('update');
+        Route::delete('/{id}', [VariantController::class, 'deleteVariant'])->name('delete');
     });
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', function () {
