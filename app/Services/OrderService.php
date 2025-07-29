@@ -123,4 +123,10 @@ class OrderService implements IOrderService
         $result = $this->orderRepository->getOrderWithItemsById($order_id);
         return $result;
     }
+    public function updateOrderStatus(Request $request)
+    {
+        $order_id = $request->input('order_id');
+        $status = $request->input('status');
+        return $this->orderRepository->updateOrderStatus($order_id, $status);
+    }
 }

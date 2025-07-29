@@ -98,4 +98,9 @@ class OrderRepository extends BaseRepository implements IOrderRepository
         $result = $this->model->with('items')->where('id', $order_id)->first();
         return $result;
     }
+    public function updateOrderStatus($order_id, $status = null) {
+        $this->model->where('id', $order_id)->update([
+            'status' => $status,
+        ]);
+    }
 }

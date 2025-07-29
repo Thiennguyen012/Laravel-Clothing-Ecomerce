@@ -30,6 +30,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     });
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [OrderController::class, 'showAll'])->name('view');
+        Route::post('/', [OrderController::class, 'updateOrderStatus'])->name('updateStatus');
         Route::get('/{id}', [OrderController::class, 'getOrderDetail'])->name('detail');
     });
     Route::prefix('users')->name('users.')->group(function () {

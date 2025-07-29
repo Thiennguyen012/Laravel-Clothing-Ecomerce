@@ -28,4 +28,9 @@ class OrderController extends Controller
         $orderDetail = $this->orderService->getOrderWithItemsById($order_id);
         return view('Admin.adminOrderDetail', compact('orderDetail'));
     }
+    public function updateOrderStatus(Request $request)
+    {
+        $this->orderService->updateOrderStatus($request);
+        return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+    }
 }

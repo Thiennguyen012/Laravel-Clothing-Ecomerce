@@ -19,4 +19,5 @@ interface IOrderRepository extends IBaseRepository
         $direction = null,
     );
     public function getOrderWithItemsById($order_id);
+    public function updateOrderStatus($order_id, $status = null);
 }

@@ -10,4 +10,5 @@ interface IOrderService
     public function orderFilter(Request $request);
     public function findOrderByCustomerName(Request $request);
     public function getOrderWithItemsById($order_id);
+    public function updateOrderStatus(Request $request);
 }
