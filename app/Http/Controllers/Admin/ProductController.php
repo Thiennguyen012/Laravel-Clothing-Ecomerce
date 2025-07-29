@@ -43,14 +43,18 @@ class ProductController extends Controller
         $products = $this->productService->AdminFilterProducts($categoryId, $inStock, $sort, $direction);
         // Count total products
         $totalProducts = $products->count();
-        // dd($categories);
+        // dd($products);
         return view('Admin.adminProducts', compact('products', 'categories', 'totalProducts'));
     }
-    public function getProductWithVariant($product_id)
+    public function getProductWithVariant(Request $request, $product_id)
     {
+        // $product_id = $request->input('product_id');
+        $sort = $request->input('sort');
+        $direction = $request->input('direction');
         $products = $this->productService->getProductWithVariantById($product_id);
-        // dd($products);
-        return view('Admin.adminVariantList', compact('products'));
+        $variants = $this->variantService->variantFilter($product_id, $sort, $direction);
+        // dd($variants);
+        return view('Admin.adminVariantList', compact('products', 'variants'));
     }
     public function newProduct(Request $request)
     {

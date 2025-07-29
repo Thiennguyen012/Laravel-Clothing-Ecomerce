@@ -31,8 +31,8 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
-                        <a href="{{ sortUrlVariant('variant_id') }}" class="flex items-center gap-1">
-                            ID <span class="text-xs">{{ sortIconVariant('variant_id') }}</span>
+                        <a href="{{ sortUrlVariant('id') }}" class="flex items-center gap-1">
+                            ID <span class="text-xs">{{ sortIconVariant('id') }}</span>
                         </a>
                     </th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
@@ -70,10 +70,11 @@
                             Ngày cập nhật <span class="text-xs">{{ sortIconVariant('updated_at') }}</span>
                         </a>
                     </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($products->variants as $variant)
+                @forelse($variants as $variant)
                     <tr>
                         <td class="px-4 py-2">{{ $variant->variant_id ?? $variant->id }}</td>
                         <td class="px-4 py-2">{{ $variant->sku ?? '-' }}</td>
@@ -89,6 +90,10 @@
                             @endif
                         </td>
                         <td class="px-4 py-2">{{ $variant->updated_at ? $variant->updated_at->format('d/m/Y H:i') : '-' }}</td>
+                        <td class="px-4 py-2">
+                            <a href="#" class="text-blue-600 hover:underline mr-2">Sửa</a>
+                            <a href="#" class="text-red-600 hover:underline">Xóa</a>
+                        </td>
                     </tr>
                 @empty
                     <tr>

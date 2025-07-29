@@ -49,6 +49,7 @@ class VariantRepository extends BaseRepository implements IVariantRepository
         if ($sort) {
             $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
             switch ($sort) {
+                case 'id':
                 case 'price':
                 case 'quantity':
                 case 'sku':
