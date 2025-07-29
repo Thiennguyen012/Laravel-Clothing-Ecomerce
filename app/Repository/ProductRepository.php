@@ -169,4 +169,8 @@ class ProductRepository extends BaseRepository implements IProductRepository
             'category_id' => $category_id,
         ]);
     }
+    public function deleteProduct($product_id)
+    {
+        return $this->model->where('product_id', $product_id)->delete();
+    }
 }

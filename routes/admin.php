@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\VariantController;
 use App\Http\Middleware\AdminMiddleware;
 
 // admin routes
@@ -14,8 +15,12 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::post('/new', [ProductController::class, 'newProduct'])->name('store');
         Route::prefix('/{id}')->group(function () {
             Route::get('/', [ProductController::class, 'getProductWithVariant'])->name('variants');
+            Route::delete('/', [ProductController::class, 'deleteProduct'])->name('delete');
             Route::get('/edit', [ProductController::class, 'showUpdateProduct'])->name('updateProduct');
             Route::post('/edit', [ProductController::class, 'updateProduct'])->name('update');
+        });
+        Route::prefix('variant')->group(function () {
+            Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
         });
     });
     Route::prefix('orders')->name('orders.')->group(function () {

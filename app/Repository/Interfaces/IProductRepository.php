@@ -15,6 +15,8 @@ interface IProductRepository extends IBaseRepository
     // hàm filter
     public function filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
     public function adminFilterProducts($categoryId = null, $inStock = null, $sort = null, $direction = null);
+    // crud
     public function newProduct($product_name, $description, $is_active, $category_id);
     public function updateProduct($product_id, $product_name, $description, $is_active, $category_id);
+    public function deleteProduct($product_id);
 }

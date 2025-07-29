@@ -15,6 +15,10 @@ class VariantRepository extends BaseRepository implements IVariantRepository
     {
         return $this->find(['product_id' => $id]);
     }
+    public function getVariantById($variant_id)
+    {
+        return $this->model->with('product')->where('id', $variant_id)->first();
+    }
     public function decreaseStock($variant_id, $quantity)
     {
         $variant = $this->model->where('id', $variant_id)->first();
@@ -68,5 +72,20 @@ class VariantRepository extends BaseRepository implements IVariantRepository
             }
         }
         return $query->paginate(12);
+    }
+    public function updateVariant($variant_id, $product_id, $sku, $color, $size, $price, $compare_at_price, $quantity, $is_active, $images, $description)
+    {
+        $this->model->where('id', $variant_id)->update([
+            'product_id' => $product_id,
+            'sku' => $sku,
+            'color' => $color,
+            'size' => $size,
+            'price' => $price,
+            'compare_at_price' => $compare_at_price,
+            'quantity' => $quantity,
+            'is_active' => $is_active,
+            'images' => $images,
+            'description' => $description
+        ]);
     }
 }

@@ -98,4 +98,8 @@ class ProductService implements IProductService
         $category_id = $request->input('category_id');
         return $this->productRepository->updateProduct($product_id, $product_name, $description, $is_active, $category_id);
     }
+    public function deleteProduct($product_id)
+    {
+        return $this->productRepository->deleteProduct($product_id);
+    }
 }

@@ -125,7 +125,11 @@
                         <td class="px-4 py-2">{{ $product->updated_at->format('d/m/Y H:i') }}</td>
                         <td class="px-4 py-2">
                             <a href="{{ route('admin.products.updateProduct', ['id' => $product->product_id]) }}" class="text-blue-600 hover:underline mr-2">Sửa</a>
-                            <a href="#" class="text-red-600 hover:underline">Xóa</a>
+                            <button type="button" class="text-red-600 hover:underline bg-transparent border-none p-0 m-0 cursor-pointer" onclick="showDeleteModal({{ $product->product_id }}, '{{ $product->product_name }}')">Xóa</button>
+                            <form id="delete-form-{{ $product->product_id }}" action="{{ route('admin.products.delete', ['id' => $product->product_id]) }}" method="POST" style="display:none">
+                                @csrf
+                                @method('DELETE')
+                            </form>
                         </td>
                     </tr>
                 @empty
@@ -142,4 +146,51 @@
         {{ $products->withQueryString()->links() }}
     </div>
 </div>
+
+<!-- Modal xác nhận xóa -->
+<div id="deleteConfirmModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold mb-4">Xác nhận xóa sản phẩm</h2>
+        <p id="deleteModalText" class="mb-6">Bạn có chắc chắn muốn xóa sản phẩm này?</p>
+        <div class="flex justify-end gap-2">
+            <button onclick="hideDeleteModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Hủy</button>
+            <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Xóa</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thông báo xóa thành công -->
+@if(session('success'))
+<div id="deleteSuccessModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md text-center">
+        <h2 class="text-lg font-semibold mb-4 text-green-600">Xóa sản phẩm thành công!</h2>
+        <button onclick="document.getElementById('deleteSuccessModal').style.display='none'" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-4">Đóng</button>
+    </div>
+</div>
+@endif
+
+<script>
+let deleteProductId = null;
+function showDeleteModal(productId, productName) {
+    deleteProductId = productId;
+    document.getElementById('deleteModalText').innerText = `Bạn có chắc chắn muốn xóa sản phẩm "${productName}"?`;
+    document.getElementById('deleteConfirmModal').style.display = 'flex';
+}
+function hideDeleteModal() {
+    document.getElementById('deleteConfirmModal').style.display = 'none';
+    deleteProductId = null;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = function() {
+            if (deleteProductId) {
+                document.getElementById('deleteConfirmModal').style.display = 'none';
+                document.getElementById('delete-form-' + deleteProductId).submit();
+            }
+        }
+    }
+});
+</script>
+
 @endsection

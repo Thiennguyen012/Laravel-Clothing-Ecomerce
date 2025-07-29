@@ -78,5 +78,9 @@ class ProductController extends Controller
         $product = $this->productService->getProductWithVariantById($id);
         return view('Admin.adminUpdateProduct', compact('product', 'categories'));
     }
+    public function deleteProduct($product_id) {
+        $this->productService->deleteProduct($product_id);
+        return redirect()->back()->with('success', 'Xóa thành công!');
+    }
     public function updateVariant(Request $request) {}
 }
