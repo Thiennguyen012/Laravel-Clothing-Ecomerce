@@ -9,32 +9,86 @@
     </div>
 
     <div class="bg-white shadow rounded-lg overflow-x-auto">
+        @php
+            $sort = request('sort', '');
+            $direction = request('direction', 'asc');
+            function sortUrlVariant($column) {
+                $currentSort = request('sort', '');
+                $currentDirection = request('direction', 'asc');
+                $newDirection = ($currentSort === $column && $currentDirection === 'asc') ? 'desc' : 'asc';
+                return request()->fullUrlWithQuery(['sort' => $column, 'direction' => $newDirection]);
+            }
+            function sortIconVariant($column) {
+                $currentSort = request('sort', '');
+                $currentDirection = request('direction', 'asc');
+                if ($currentSort === $column) {
+                    return $currentDirection === 'asc' ? '▲' : '▼';
+                }
+                return '';
+            }
+        @endphp
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tên biến thể</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Giá</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Số lượng</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('variant_id') }}" class="flex items-center gap-1">
+                            ID <span class="text-xs">{{ sortIconVariant('variant_id') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('sku') }}" class="flex items-center gap-1">
+                            SKU <span class="text-xs">{{ sortIconVariant('sku') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('color') }}" class="flex items-center gap-1">
+                            Màu sắc <span class="text-xs">{{ sortIconVariant('color') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('size') }}" class="flex items-center gap-1">
+                            Size <span class="text-xs">{{ sortIconVariant('size') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('price') }}" class="flex items-center gap-1">
+                            Giá <span class="text-xs">{{ sortIconVariant('price') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('quantity') }}" class="flex items-center gap-1">
+                            Số lượng <span class="text-xs">{{ sortIconVariant('quantity') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('is_active') }}" class="flex items-center gap-1">
+                            Trạng thái <span class="text-xs">{{ sortIconVariant('is_active') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrlVariant('updated_at') }}" class="flex items-center gap-1">
+                            Ngày cập nhật <span class="text-xs">{{ sortIconVariant('updated_at') }}</span>
+                        </a>
+                    </th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($products->variants as $variant)
                     <tr>
                         <td class="px-4 py-2">{{ $variant->variant_id ?? $variant->id }}</td>
-                        <td class="px-4 py-2">{{ $variant->variant_name ?? '-' }}</td>
+                        <td class="px-4 py-2">{{ $variant->sku ?? '-' }}</td>
+                        <td class="px-4 py-2">{{ $variant->color ?? '-' }}</td>
+                        <td class="px-4 py-2">{{ $variant->size ?? '-' }}</td>
                         <td class="px-4 py-2">{{ number_format($variant->price, 0, ',', '.') }} VNĐ</td>
                         <td class="px-4 py-2">{{ $variant->quantity }}</td>
-                        <td class="px-4 py-2">{{ $variant->sku ?? '-' }}</td>
                         <td class="px-4 py-2">
-                            @if($variant->quantity > 0)
-                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Còn hàng</span>
+                            @if($variant->is_active ?? true)
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Hiển thị</span>
                             @else
-                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Hết hàng</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-600">Ẩn</span>
                             @endif
                         </td>
+                        <td class="px-4 py-2">{{ $variant->updated_at ? $variant->updated_at->format('d/m/Y H:i') : '-' }}</td>
                     </tr>
                 @empty
                     <tr>
