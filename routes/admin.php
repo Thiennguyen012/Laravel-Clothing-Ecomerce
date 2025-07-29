@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\VariantController;
 use App\Http\Middleware\AdminMiddleware;
@@ -28,9 +29,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::delete('/{id}', [VariantController::class, 'deleteVariant'])->name('delete');
     });
     Route::prefix('orders')->name('orders.')->group(function () {
-        Route::get('/', function () {
-            return view('Admin.adminOrders');
-        })->name('view');
+        Route::get('/',[OrderController::class, 'showAll'])->name('view');
     });
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', function () {

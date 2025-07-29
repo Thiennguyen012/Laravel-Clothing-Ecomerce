@@ -8,7 +8,7 @@
         <form method="GET" action="" class="flex flex-wrap items-end gap-4">
             <div>
                 <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-                <select name="categoryId" id="category" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 min-w-[180px]">
+                <select name="categoryId" id="category" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 min-w-[180px] px-3 py-2">
                     <option value="">Tất cả</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat->category_id }}" {{ request('categoryId') == $cat->category_id ? 'selected' : '' }}>

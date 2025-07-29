@@ -8,6 +8,7 @@ use App\Repository\Interfaces\IOrderRepository;
 use App\Repository\Interfaces\IVariantRepository;
 use App\Services\Interfaces\IOrderService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class OrderService implements IOrderService
 {
@@ -85,5 +86,36 @@ class OrderService implements IOrderService
 
             return $order;
         });
+    }
+    public function orderFilter(Request $request)
+    {
+        $order_id = $request->input('order_id');
+        $user_id = $request->input('user_id');
+        $session_id = $request->input('session_id');
+        $customer_name = $request->input('customer_name');
+        $customer_email = $request->input('customer_email');
+        $customer_phone = $request->input('customer_phone');
+        $shipping_address = $request->input('shipping_address');
+        $status = $request->input('status');
+        $sort = $request->input('sort');
+        $direction = $request->input('direction');
+        $result =  $this->orderRepository->orderFilter(
+            $order_id,
+            $user_id,
+            $session_id,
+            $customer_name,
+            $customer_email,
+            $customer_phone,
+            $shipping_address,
+            $status,
+            $sort,
+            $direction
+        );
+        return $result;
+    }
+    public function findOrderByCustomerName(Request $request)
+    {
+        $customer_name = $request->input('customer_name');
+        return $this->orderRepository->findOrderByCustomerName($customer_name);
     }
 }
