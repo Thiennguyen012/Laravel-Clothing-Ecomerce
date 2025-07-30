@@ -71,6 +71,12 @@ class ProductService implements IProductService
         return $result;
     }
 
+    public function filterProductsBySlug($categorySlug = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
+    {
+        $result = $this->productRepository->filterProductsBySlug($categorySlug, $minPrice, $maxPrice, $inStock, $order);
+        return $result;
+    }
+
     public function adminFilterProducts($categoryId = null, $inStock = null, $product_name = null, $sort = null, $direction = null)
     {
         $result = $this->productRepository->adminFilterProducts($categoryId, $inStock, $product_name, $sort, $direction);

@@ -176,4 +176,56 @@ class ProductRepository extends BaseRepository implements IProductRepository
     {
         return $this->model->where('product_id', $product_id)->delete();
     }
+    /**
+     * Lọc sản phẩm theo slug category, các tham số khác tương tự filterProducts
+     */
+    public function filterProductsBySlug($categorySlug = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
+    {
+        $query = $this->model->with(['variants', 'category']);
+
+        if ($categorySlug) {
+            $query = $query->whereHas('category', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
+        }
+
+        if ($minPrice && $maxPrice) {
+            $query = $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                $q->whereBetween('price', [$minPrice, $maxPrice]);
+            });
+        }
+
+        if ($inStock) {
+            $query = $query->whereHas('variants', function ($q) {
+                $q->where('quantity', '>', 0);
+            });
+        }
+        if ($order) {
+            switch ($order) {
+                case 'newest':
+                    $query = $query->orderBy('updated_at', 'desc');
+                    break;
+                case 'oldest':
+                    $query = $query->orderBy('updated_at', 'asc');
+                    break;
+                case 'priceDown':
+                    $query = $query->orderBy(
+                        DB::raw('(SELECT MAX(price) FROM variants WHERE variants.product_id = products.product_id)'),
+                        'desc'
+                    );
+                    break;
+                case 'priceUp':
+                    $query = $query->orderBy(
+                        DB::raw('(SELECT MIN(price) FROM variants WHERE variants.product_id = products.product_id)'),
+                        'asc'
+                    );
+                    break;
+                case 'name':
+                    $query = $query->orderBy('product_name', 'asc');
+                    break;
+            }
+        }
+
+        return $query->paginate(12);
+    }
 }
