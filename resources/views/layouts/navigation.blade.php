@@ -54,13 +54,6 @@
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Tài khoản') }}
                             </x-dropdown-link>
-
-                            @if(Auth::user() && (Auth::user()->role === 'admin' || Auth::user()->is_admin ?? false))
-                                <x-dropdown-link :href="route('admin.dashboard')">
-                                    {{ __('Quản trị') }}
-                                </x-dropdown-link>
-                            @endif
-
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

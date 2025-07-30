@@ -18,9 +18,9 @@ class UserRepository extends BaseRepository implements IUserRepository
     {
         return $this->model->create($data);
     }
-    public function userFilter($name = null, $email = null, $role = null, $sort = null, $direction = null)
+    public function userFilter($name = null, $email = null, $sort = null, $direction = null)
     {
-        $query = $this->model->where('role', $role);
+        $query = $this->model->with('order');
         if ($name) {
             $query = $query->where('name', 'like', "%$name%");
         }
@@ -37,17 +37,13 @@ class UserRepository extends BaseRepository implements IUserRepository
             case 'updated_at':
                 $query = $query->orderBy($sort, $direction);
                 break;
+            case 'created_at':
+                $query = $query->orderBy($sort, $direction);
+                break;
             case 'role':
             default:
                 $query = $query->orderBy('id', 'desc');
         }
         return $query->paginate(12);
-    }
-    public function changeRole($user_id, $role)
-    {
-        $user = $this->model->where('id', $user_id)->first();
-        $user->update([
-            'role' => $role
-        ]);
     }
 }

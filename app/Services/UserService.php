@@ -17,10 +17,9 @@ class UserService
     {
         $name = $request->input('name');
         $email = $request->input('email');
-        $role = $request->input('role');
         $sort = $request->input('sort');
         $direction = $request->input('direction');
-        $result = $this->userRepository->userFilter($name, $email, $role, $sort, $direction);
+        $result = $this->userRepository->userFilter($name, $email, $sort, $direction);
         return $result;
     }
 }

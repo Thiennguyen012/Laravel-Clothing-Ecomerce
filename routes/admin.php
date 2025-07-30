@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VariantController;
 use App\Http\Middleware\AdminMiddleware;
 
@@ -42,9 +43,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{id}', [OrderController::class, 'getOrderDetail'])->name('detail');
         });
         Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', function () {
-                return view('Admin.adminUsers');
-            })->name('view');
+            Route::get('/', [UserController::class, 'showAll'])->name('view');
         });
     });
 });
