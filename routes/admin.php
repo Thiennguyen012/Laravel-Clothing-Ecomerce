@@ -44,6 +44,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'showAll'])->name('view');
+            Route::get('/{id}/edit', [UserController::class, 'showUpdateUser'])->name('updateUser');
+            Route::post('/{id}/edit', [UserController::class, 'updateUser'])->name('update');
+            Route::post('/{id}/password', [UserController::class, 'updateUserPassword'])->name('updatePassword');
         });
     });
 });

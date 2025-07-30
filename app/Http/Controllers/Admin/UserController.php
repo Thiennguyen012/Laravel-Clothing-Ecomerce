@@ -18,4 +18,20 @@ class UserController extends Controller
         $users = $this->userService->userFilter($request);
         return view('Admin.adminUsers', compact('users'));
     }
+
+    public function showUpdateUser($user_id)
+    {
+        $user = $this->userService->getUserWithOrderById($user_id);
+        return view('Admin.adminUpdateUser', compact('user'));
+    }
+    public function updateUser(Request $request, $user_id)
+    {
+        $this->userService->updateUser($request, $user_id);
+        return redirect()->back()->with('success', 'Cập nhật thông tin tài khoản thành công!');
+    }
+    public function updateUserPassword(Request $request, $user_id)
+    {
+        $this->userService->updateUserPassword($request, $user_id);
+        return redirect()->back()->with('success_password', 'Cập nhật mật khẩu tài khoản thành công!');
+    }
 }

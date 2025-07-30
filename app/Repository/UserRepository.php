@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Models\User;
 use App\Repository\Interfaces\IUserRepository;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository extends BaseRepository implements IUserRepository
 {
@@ -45,5 +46,27 @@ class UserRepository extends BaseRepository implements IUserRepository
                 $query = $query->orderBy('id', 'desc');
         }
         return $query->paginate(12);
+    }
+    public function getUserWithOrderById($user_id)
+    {
+        $result = $this->model->with('order')->where('id', $user_id)->first();
+        return $result;
+    }
+    public function updateUser($user_id, $name, $email)
+    {
+        return $this->model->where('id', $user_id)->update([
+            'name' => $name,
+            'email' => $email,
+        ]);
+    }
+    public function updateUserPassword($user_id, $password)
+    {
+        return $this->model->where('id', $user_id)->update([
+            'password' => Hash::make($password),
+        ]);
+    }
+    public function deleteUser($user_id)
+    {
+        return $this->model->where('id', $user_id)->delete();
     }
 }
