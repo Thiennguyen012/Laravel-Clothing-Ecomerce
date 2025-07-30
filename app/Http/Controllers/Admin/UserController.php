@@ -34,4 +34,16 @@ class UserController extends Controller
         $this->userService->updateUserPassword($request, $user_id);
         return redirect()->back()->with('success_password', 'Cập nhật mật khẩu tài khoản thành công!');
     }
+    public function showNewUser()
+    {
+        return view('Admin.adminNewUser');
+    }
+    public function newUser(Request $request)
+    {
+        $newUser = $this->userService->newUser($request);
+        if($newUser === false){
+            return redirect()->back()->withInput()->with('error', 'Email đã tồn tại!');
+        }
+        return redirect()->back()->with('success', 'Tạo tài khoản mới thành công!');
+    }
 }

@@ -17,6 +17,10 @@ class UserRepository extends BaseRepository implements IUserRepository
     }
     public function newUser(array $data = [])
     {
+        // Kiểm tra email đã tồn tại chưa
+        if ($this->model->where('email', $data['email'])->exists()) {
+            return false;
+        }
         return $this->model->create($data);
     }
     public function userFilter($name = null, $email = null, $sort = null, $direction = null)

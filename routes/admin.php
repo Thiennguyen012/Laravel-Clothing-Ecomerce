@@ -44,6 +44,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'showAll'])->name('view');
+            Route::get('/new', [UserController::class, 'showNewUser'])->name('newUser');
+            Route::post('/new', [UserController::class, 'newUser'])->name('store');
             Route::get('/{id}/edit', [UserController::class, 'showUpdateUser'])->name('updateUser');
             Route::post('/{id}/edit', [UserController::class, 'updateUser'])->name('update');
             Route::post('/{id}/password', [UserController::class, 'updateUserPassword'])->name('updatePassword');

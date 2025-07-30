@@ -11,4 +11,5 @@ interface IUserService
     public function updateUser(Request $request, $user_id);
     public function updateUserPassword(Request $request, $user_id);
     public function deleteUser($user_id);
+    public function newUser(Request $request);
 }

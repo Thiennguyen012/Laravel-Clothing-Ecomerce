@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Repository\UserRepository;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -44,5 +44,17 @@ class UserService
     public function deleteUser($user_id)
     {
         return $this->userRepository->deleteUser($user_id);
+    }
+    public function newUser(Request $request)
+    {
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $data = [
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($password),
+        ];
+        return $this->userRepository->newUser($data);
     }
 }
