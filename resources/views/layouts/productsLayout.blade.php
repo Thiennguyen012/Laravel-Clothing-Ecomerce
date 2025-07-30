@@ -26,7 +26,6 @@
                                     <label class="flex items-center">
                                         <input type="radio" name="category" value="" 
                                                {{ !request('categoryId') ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-sm text-gray-700">Tất cả sản phẩm</span>
                                         @if(isset($totalProducts))
@@ -40,7 +39,6 @@
                                             <label class="flex items-center">
                                                 <input type="radio" name="category" value="{{ $category->category_id }}" 
                                                        {{ request('categoryId') == $category->category_id ? 'checked' : '' }}
-                                                       onchange="filterProducts()"
                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                                 <span class="ml-3 text-sm text-gray-700">{{ $category->category_name }}</span>
                                                 @if($category->products)
@@ -75,35 +73,30 @@
                                     <label class="flex items-center">
                                         <input type="radio" name="price_range" value="" 
                                                {{ !request('price_range') && !$currentMinPrice ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-sm text-gray-700">Tất cả</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="price_range" value="0-500000" 
                                                {{ (request('price_range') == '0-500000') || ($currentPriceRange == '0-500000') ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-sm text-gray-700">Dưới 500.000đ</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="price_range" value="500000-1000000" 
                                                {{ (request('price_range') == '500000-1000000') || ($currentPriceRange == '500000-1000000') ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-sm text-gray-700">500.000đ - 1.000.000đ</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="price_range" value="1000000-2000000" 
                                                {{ (request('price_range') == '1000000-2000000') || ($currentPriceRange == '1000000-2000000') ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-sm text-gray-700">1.000.000đ - 2.000.000đ</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="price_range" value="2000000+" 
                                                {{ (request('price_range') == '2000000+') || ($currentPriceRange == '2000000+') ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-sm text-gray-700">Trên 2.000.000đ</span>
                                     </label>
@@ -118,17 +111,16 @@
                                         <input type="checkbox" name="in_stock" value="1" 
                                                id="inStockCheckbox"
                                                {{ request('inStock') === 'true' ? 'checked' : '' }}
-                                               onchange="filterProducts()"
                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                         <span class="ml-3 text-sm text-gray-700">Còn hàng</span>
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Clear Filters -->
-                            <div class="pt-4 border-t border-gray-200">
-                                <button onclick="clearFilters()" 
-                                        class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors duration-200">
+                            <!-- Filter & Clear Buttons -->
+                            <div class="pt-4 border-t border-gray-200 flex flex-col gap-2">
+                                <button type="button" onclick="applyFilters()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200">Lọc</button>
+                                <button type="button" onclick="clearFilters()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors duration-200">
                                     <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                     </svg>
@@ -239,6 +231,57 @@
     </main>
 </div>
 
+<script>
+function applyFilters() {
+    // Lấy giá trị các filter
+    var category = document.querySelector('input[name="category"]:checked');
+    var priceRange = document.querySelector('input[name="price_range"]:checked');
+    var inStock = document.getElementById('inStockCheckbox');
+    var params = new URLSearchParams(window.location.search);
+    // Danh mục
+    if (category) {
+        if (category.value) {
+            params.set('categoryId', category.value);
+        } else {
+            params.delete('categoryId');
+        }
+    }
+    // Giá
+    if (priceRange) {
+        var val = priceRange.value;
+        if (val === '') {
+            params.delete('price_range');
+            params.delete('minPrice');
+            params.delete('maxPrice');
+        } else {
+            params.set('price_range', val);
+            if (val === '0-500000') {
+                params.set('minPrice', 0);
+                params.set('maxPrice', 500000);
+            } else if (val === '500000-1000000') {
+                params.set('minPrice', 500000);
+                params.set('maxPrice', 1000000);
+            } else if (val === '1000000-2000000') {
+                params.set('minPrice', 1000000);
+                params.set('maxPrice', 2000000);
+            } else if (val === '2000000+') {
+                params.set('minPrice', 2000000);
+                params.set('maxPrice', 999999999);
+            }
+        }
+    }
+    // Còn hàng
+    if (inStock && inStock.checked) {
+        params.set('inStock', 'true');
+    } else {
+        params.delete('inStock');
+    }
+    // Reset page về 1 khi lọc
+    params.set('page', 1);
+    // Giữ các tham số khác (order, search...)
+    window.location.search = params.toString();
+}
+</script>
 @vite(['resources/js/product.js'])
 @stack('scripts')
 @endsection
