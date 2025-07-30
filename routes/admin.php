@@ -14,43 +14,37 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::middleware('auth:admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard1');
-    });
-});
 
-
-// admin routes
-Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [ProductController::class, 'showAll'])->name('view');
-        Route::get('/new', [ProductController::class, 'showNewProduct'])->name('newProduct');
-        Route::post('/new', [ProductController::class, 'newProduct'])->name('store');
-        Route::prefix('/{id}')->group(function () {
-            Route::get('/', [ProductController::class, 'getProductWithVariant'])->name('variants');
-            Route::delete('/', [ProductController::class, 'deleteProduct'])->name('delete');
-            Route::get('/edit', [ProductController::class, 'showUpdateProduct'])->name('updateProduct');
-            Route::post('/edit', [ProductController::class, 'updateProduct'])->name('update');
+    // Các route cần bảo vệ bằng guard admin
+    Route::middleware(['auth:admin'])->group(function () {
+        Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/', [ProductController::class, 'showAll'])->name('view');
+            Route::get('/new', [ProductController::class, 'showNewProduct'])->name('newProduct');
+            Route::post('/new', [ProductController::class, 'newProduct'])->name('store');
+            Route::prefix('/{id}')->group(function () {
+                Route::get('/', [ProductController::class, 'getProductWithVariant'])->name('variants');
+                Route::delete('/', [ProductController::class, 'deleteProduct'])->name('delete');
+                Route::get('/edit', [ProductController::class, 'showUpdateProduct'])->name('updateProduct');
+                Route::post('/edit', [ProductController::class, 'updateProduct'])->name('update');
+            });
         });
-    });
-    Route::prefix('variant')->name('variants.')->group(function () {
-        Route::get('/new', [VariantController::class, 'showNewVariant'])->name('newVariant');
-        Route::post('/new', [VariantController::class, 'newVariant'])->name('store');
-        Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
-        Route::post('/{id}', [VariantController::class, 'updateVariant'])->name('update');
-        Route::delete('/{id}', [VariantController::class, 'deleteVariant'])->name('delete');
-    });
-    Route::prefix('orders')->name('orders.')->group(function () {
-        Route::get('/', [OrderController::class, 'showAll'])->name('view');
-        Route::post('/', [OrderController::class, 'updateOrderStatus'])->name('updateStatus');
-        Route::get('/{id}', [OrderController::class, 'getOrderDetail'])->name('detail');
-    });
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', function () {
-            return view('Admin.adminUsers');
-        })->name('view');
+        Route::prefix('variant')->name('variants.')->group(function () {
+            Route::get('/new', [VariantController::class, 'showNewVariant'])->name('newVariant');
+            Route::post('/new', [VariantController::class, 'newVariant'])->name('store');
+            Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
+            Route::post('/{id}', [VariantController::class, 'updateVariant'])->name('update');
+            Route::delete('/{id}', [VariantController::class, 'deleteVariant'])->name('delete');
+        });
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrderController::class, 'showAll'])->name('view');
+            Route::post('/', [OrderController::class, 'updateOrderStatus'])->name('updateStatus');
+            Route::get('/{id}', [OrderController::class, 'getOrderDetail'])->name('detail');
+        });
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', function () {
+                return view('Admin.adminUsers');
+            })->name('view');
+        });
     });
 });

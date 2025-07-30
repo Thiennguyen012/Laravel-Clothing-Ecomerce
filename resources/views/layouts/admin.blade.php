@@ -10,8 +10,11 @@
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <aside class="w-64 bg-white shadow-md flex flex-col">
-            <div class="h-16 flex items-center justify-center border-b">
+            <div class="h-16 flex flex-col items-center justify-center border-b">
                 <span class="font-bold text-xl text-blue-600">Admin Panel</span>
+                @auth('admin')
+                    <span class="text-sm text-gray-600 mt-1">{{ Auth::guard('admin')->user()->name }}</span>
+                @endauth
             </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
                 
@@ -30,15 +33,13 @@
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Về Trang web') }}
                 </x-responsive-nav-link>
-                <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                            {{ __('Log Out') }}
-                        </x-responsive-nav-link>
-                    </form>
+                <form method="POST" action="{{ route('admin.logout') }}">
+                    @csrf
+                    <x-responsive-nav-link :href="route('admin.logout')"
+                        onclick="event.preventDefault(); this.closest('form').submit();">
+                        {{ __('Log Out') }}
+                    </x-responsive-nav-link>
+                </form>
             </nav>
         </aside>
         <!-- Main Content -->
