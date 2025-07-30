@@ -225,6 +225,20 @@
                             </svg>
                             Thêm vào giỏ hàng
                         </button>
+
+                        <!-- Modal chọn thiếu size/màu -->
+                        <div id="chooseVariantModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30 hidden">
+                            <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center">
+                                <div class="flex justify-center mb-2">
+                                    <svg class="w-10 h-10 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01" />
+                                    </svg>
+                                </div>
+                                <div class="text-lg font-semibold mb-2">Vui lòng chọn đầy đủ size và màu sắc trước khi thêm vào giỏ hàng!</div>
+                                <button onclick="document.getElementById('chooseVariantModal').classList.add('hidden')" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Đóng</button>
+                            </div>
+                        </div>
                         
                         <button type="button" 
                                 class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-md transition duration-200 ease-in-out">
@@ -373,6 +387,16 @@
     </div>
 </div>
 
+<script>
+// Hiển thị modal khi thiếu size/màu
+function showChooseVariantModal() {
+    var modal = document.getElementById('chooseVariantModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+}
+window.showChooseVariantModal = showChooseVariantModal;
+</script>
 @vite(['resources/js/singleProduct.js'])
 
 <style>

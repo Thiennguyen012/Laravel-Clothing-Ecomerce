@@ -6,9 +6,13 @@ function addToCartSingleProduct() {
         document.getElementById("quantity")?.value || "1"
     );
     if (!variantId) {
-        alert(
-            "Vui lòng chọn đầy đủ size và màu sắc trước khi thêm vào giỏ hàng!"
-        );
+        if (window.showChooseVariantModal) {
+            window.showChooseVariantModal();
+        } else {
+            alert(
+                "Vui lòng chọn đầy đủ size và màu sắc trước khi thêm vào giỏ hàng!"
+            );
+        }
         return;
     }
     const token = document
