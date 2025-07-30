@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             ProductDescriptionSeeder::class, // Thêm seeder mới
             VariantSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }
