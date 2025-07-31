@@ -79,6 +79,7 @@
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow hover:bg-blue-700 transition">Đặt hàng</button>
+                    <a href="{{ route('cart') }}" class="w-full mt-3 inline-block text-center bg-white border border-gray-300 text-blue-700 font-bold py-3 rounded-xl shadow hover:bg-gray-100 transition">&larr; Quay lại giỏ hàng</a>
                 </form>
             @else
                 <div class="text-center py-8">

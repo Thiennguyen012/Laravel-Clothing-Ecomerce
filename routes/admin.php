@@ -11,8 +11,8 @@ use App\Http\Middleware\AdminMiddleware;
 
 // login logout cho admin
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->middleware('redirectIfAdminAuthenticated')->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware('redirectIfAdminAuthenticated');
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 
