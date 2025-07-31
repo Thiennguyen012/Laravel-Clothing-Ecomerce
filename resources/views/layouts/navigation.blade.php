@@ -97,13 +97,6 @@
     <!-- Mobile Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <!-- Nav Links -->
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Trang chủ</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('products')" :active="request()->routeIs('products')">Sản phẩm</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">Thông tin</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')">Liên hệ</x-responsive-nav-link>
-        </div>
-
         <!-- Mobile Search Form -->
         <div class="px-4 py-3 border-t border-gray-200">
             <form action="{{ route('products.search') }}" method="GET" class="flex items-center gap-2">
@@ -125,6 +118,14 @@
                 </button>
             </form>
         </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Trang chủ</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('products')" :active="request()->routeIs('products')">Sản phẩm</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">Thông tin</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')">Liên hệ</x-responsive-nav-link>
+        </div>
+
+        
 
         <!-- Auth for Mobile -->
         @auth
