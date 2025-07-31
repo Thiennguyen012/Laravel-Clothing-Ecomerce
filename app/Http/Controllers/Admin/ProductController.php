@@ -84,5 +84,4 @@ class ProductController extends Controller
         $this->productService->deleteProduct($product_id);
         return redirect()->back()->with('success', 'Xóa thành công!');
     }
-    public function updateVariant(Request $request) {}
 }

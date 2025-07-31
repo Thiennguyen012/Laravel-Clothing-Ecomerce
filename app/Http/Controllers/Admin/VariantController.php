@@ -37,8 +37,19 @@ class VariantController extends Controller
 
     public function updateVariant(Request $request)
     {
+        // Xử lý upload ảnh đơn giản: chỉ lưu 1 ảnh đầu tiên
+        if ($request->hasFile('images')) {
+            $file = $request->file('images')[0];
+            $fileName = time() . '-' . $file->getClientOriginalName();
+            $path = $file->storeAs('images/vairiants', $fileName);
+            $request->merge(['images' => $path]);
+            // dd($path);
+        } else {
+            // Nếu không upload mới, giữ nguyên ảnh cũ
+            $request->merge(['images' => $request->input('old_images')]);
+        }
         $this->variantService->updateVariant($request);
-        return redirect()->back()->with('success', 'Cập nhật variant thành công!');
+        return redirect()->back()->with('success', 'Cập nhật biến thể thành công!');
     }
     public function deleteVariant($variant_id)
     {

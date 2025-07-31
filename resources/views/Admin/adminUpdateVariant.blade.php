@@ -8,7 +8,7 @@
     @if(session('success'))
         <div class="mb-4 p-4 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
     @endif
-    <form action="{{ route('admin.variants.updateVariant', ['id' => $variant->variant_id ?? $variant->id]) }}" method="POST" class="bg-white shadow rounded-lg p-6 max-w-2xl mx-auto">
+    <form action="{{ route('admin.variants.updateVariant', ['id' => $variant->variant_id ?? $variant->id]) }}" method="POST" enctype="multipart/form-data" class="bg-white shadow rounded-lg p-6 max-w-2xl mx-auto">
         @csrf
         @method('POST')
         <input type="hidden" name='variant_id' value="{{ $variant->id }}">
@@ -39,7 +39,12 @@
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Ảnh (images)</label>
-            <input type="text" name="images" value="{{ old('images', $variant->images ?? '') }}" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+            <input type="file" name="images[]" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+            @if(!empty($variant->images))
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <img src="{{ asset('storage/' . $variant->images) }}" alt="Ảnh" class="w-16 h-16 object-cover rounded border">
+                </div>
+            @endif
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Mô tả</label>
