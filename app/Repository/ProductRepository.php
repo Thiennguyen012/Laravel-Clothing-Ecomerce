@@ -65,10 +65,10 @@ class ProductRepository extends BaseRepository implements IProductRepository
     }
     public function filterProducts($product_name = null, $categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
     {
-        $query = $this->model->with(['variants', 'category']);
+        $query = $this->model->with(['variants', 'category'])->where('is_active', 1);
 
         if ($product_name) {
-            $query = $query->where('product_name', 'like', "%$product_name%");
+            $query = $query->where('product_name', 'REGEXP', '[[:<:]]' . $product_name . '[[:>:]]');
         }
 
         if ($categoryId) {

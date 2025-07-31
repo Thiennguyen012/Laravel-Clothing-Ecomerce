@@ -58,7 +58,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-3">Giao hàng nhanh chóng</h3>
-                    <p class="text-gray-600">Giao hàng miễn phí trong 24h tại TP.HCM và 2-3 ngày toàn quốc</p>
+                    <p class="text-gray-600">Giao hàng miễn phí trong 24h tại Hà Nội và 2-3 ngày toàn quốc</p>
                 </div>
 
                 <!-- Feature 3 -->
