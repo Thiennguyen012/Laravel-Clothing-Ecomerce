@@ -21,8 +21,18 @@
                                             <div class="flex items-center space-x-4">
                                                 <!-- Product Image -->
                                                 <div class="flex-shrink-0">
+                                                    @php
+                                                        $imagePath = null;
+                                                        if(isset($item->variant->images) && trim($item->variant->images) !== '') {
+                                                            $imagePath = asset('storage/' . ltrim($item->variant->images, '/'));
+                                                        } elseif(isset($item->variant->product->images) && trim($item->variant->product->images) !== '') {
+                                                            $imagePath = asset('storage/' . ltrim($item->variant->product->images, '/'));
+                                                        } else {
+                                                            $imagePath = asset('images/placeholder.jpg');
+                                                        }
+                                                    @endphp
                                                     <img class="h-20 w-20 rounded-md object-cover" 
-                                                         src="{{ $item->variant->images ?? '/images/placeholder.jpg' }}" 
+                                                         src="{{ $imagePath }}" 
                                                          alt="{{ $item->variant->product->product_name ?? 'Product' }}">
                                                 </div>
                                                 
