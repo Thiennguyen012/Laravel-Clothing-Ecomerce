@@ -41,9 +41,14 @@ class UserController extends Controller
     public function newUser(Request $request)
     {
         $newUser = $this->userService->newUser($request);
-        if($newUser === false){
+        if ($newUser === false) {
             return redirect()->back()->withInput()->with('error', 'Email đã tồn tại!');
         }
         return redirect()->back()->with('success', 'Tạo tài khoản mới thành công!');
+    }
+    public function deleteUser($user_id)
+    {
+        $this->userService->deleteUser($user_id);
+        return redirect()->back()->with('success', 'Xóa người dùng thành công');
     }
 }

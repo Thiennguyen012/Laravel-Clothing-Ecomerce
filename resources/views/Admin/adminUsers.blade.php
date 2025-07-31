@@ -85,7 +85,11 @@
                         <td class="px-4 py-2 whitespace-nowrap">{{ $user->updated_at ? $user->updated_at->format('d/m/Y H:i') : '-' }}</td>
                         <td class="px-4 py-2 whitespace-nowrap">
                             <a href="{{ route('admin.users.updateUser', ['id' => $user->id]) }}" class="text-blue-600 hover:underline mr-2">Sửa</a>
-                            <a href="#" class="text-red-600 hover:underline" onclick="return confirm('Bạn có chắc muốn xóa người dùng này?');">Xóa</a>
+                            <form action="{{ route('admin.users.delete', ['id' => $user->id]) }}" method="POST" style="display:inline" onsubmit="return confirm('Bạn có chắc muốn xóa người dùng này?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:underline bg-transparent border-none p-0 m-0 cursor-pointer">Xóa</button>
+                            </form>
                         </td>
                     </tr>
                 @empty
