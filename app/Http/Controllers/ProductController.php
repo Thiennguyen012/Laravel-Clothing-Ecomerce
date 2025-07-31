@@ -47,9 +47,9 @@ class ProductController extends Controller
         $product = $this->productService->getProductDetail($product_id);
 
         // Lấy sản phẩm liên quan (cùng category, loại trừ sản phẩm hiện tại)
-        $relatedProducts = null;
+        $relatedProducts = collect();
         if ($product && $product->category_id) {
-            $relatedProducts = $this->productService->filterProducts($product->category_id)
+            $relatedProducts = $this->productService->filterProducts(null, $product->category_id, null, null, null, null)
                 ->where('product_id', '!=', $product_id)
                 ->take(4);
         }
