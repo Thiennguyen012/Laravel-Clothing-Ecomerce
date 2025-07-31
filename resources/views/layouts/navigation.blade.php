@@ -31,6 +31,14 @@
                         {{ __('Liên hệ') }}
                     </x-nav-link>
                 </div>
+
+                <!-- Search Form -->
+                <div class="hidden sm:ms-10 sm:flex items-center">
+                    <form action="{{ route('products.search') }}" method="GET" class="flex">
+                        <input type="text" name="product_name" class="border border-gray-300 rounded-l px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Tìm kiếm sản phẩm...">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-r">Tìm</button>
+                    </form>
+                </div>
             </div>
 
             <!-- Auth Section -->

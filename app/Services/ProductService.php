@@ -65,9 +65,9 @@ class ProductService implements IProductService
         return $result;
     }
     // filter chính của trang products
-    public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
+    public function filterProducts($product_name = null, $categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
     {
-        $result = $this->productRepository->filterProducts($categoryId, $minPrice, $maxPrice, $inStock, $order);
+        $result = $this->productRepository->filterProducts($product_name, $categoryId, $minPrice, $maxPrice, $inStock, $order);
         return $result;
     }
 
@@ -107,5 +107,10 @@ class ProductService implements IProductService
     public function deleteProduct($product_id)
     {
         return $this->productRepository->deleteProduct($product_id);
+    }
+    public function searchProducts($product_name)
+    {
+        $products = $this->productRepository->searchProducts($product_name);
+        return $products;
     }
 }

@@ -63,9 +63,13 @@ class ProductRepository extends BaseRepository implements IProductRepository
         });
         return $result;
     }
-    public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
+    public function filterProducts($product_name = null, $categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null)
     {
         $query = $this->model->with(['variants', 'category']);
+
+        if ($product_name) {
+            $query = $query->where('product_name', 'like', "%$product_name%");
+        }
 
         if ($categoryId) {
             $query = $query->where('category_id', $categoryId);
@@ -227,5 +231,9 @@ class ProductRepository extends BaseRepository implements IProductRepository
         }
 
         return $query->paginate(12);
+    }
+    public function searchProducts($product_name)
+    {
+        return $this->model->with('variants')->where('product_name', 'like', "%$product_name%")->paginate(12);
     }
 }

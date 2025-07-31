@@ -16,7 +16,7 @@ interface IProductService
     public function sortProductNewest($categoryId = null);
     public function sortProductOldest($categoryId = null);
 
-    public function filterProducts($categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null);
+    public function filterProducts($product_name = null, $categoryId = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null);
     public function filterProductsBySlug($categorySlug = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null);
     public function adminFilterProducts($categoryId = null, $inStock = null, $product_name =  null, $sort = null, $direction = null);
     public function getProductDetail($product_id);
@@ -24,4 +24,7 @@ interface IProductService
     public function newProduct(Request $request);
     public function updateProduct(Request $request);
     public function deleteProduct($product_id);
+
+    // search sản phẩm
+    public function searchProducts($product_name);
 }

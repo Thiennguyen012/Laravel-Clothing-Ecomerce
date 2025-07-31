@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/search', [ProductController::class, 'showAll'])->name('products.search');
+
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'showAll'])->name('products');
     Route::get('/{id}', [ProductController::class, 'getProductDetail'])->name('product.show')->where('id', '[0-9]+');
