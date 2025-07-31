@@ -22,7 +22,7 @@
                     @if(!empty($item->images))
                         <img src="{{ asset('storage/' . $item->images) }}" 
                              alt="{{ $item->product_name }}" 
-                             class="h-48 w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
+                             class="h-48 w-full object-contain object-center group-hover:opacity-75 transition-opacity duration-300">
                     @else
                         <div class="h-48 w-full bg-gray-300 flex items-center justify-center">
                             <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

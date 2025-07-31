@@ -38,7 +38,7 @@
                             <img id="mainImage" 
                                  src="{{ asset('storage/' . ltrim($product->images, '/')) }}" 
                                  alt="{{ $product->product_name }}"
-                                 class="w-full h-96 object-cover object-center">
+                                 class="w-full h-96 object-contain object-center bg-white">
                         @else
                             <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
                                 <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,10 +323,16 @@
                         @foreach($relatedProducts as $relatedProduct)
                             <div class="group relative">
                                 <div class="bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 transition-opacity">
-                                    @if(isset($relatedProduct->images) && is_array($relatedProduct->images) && count($relatedProduct->images) > 0)
-                                        <img src="{{ asset('storage/' . $relatedProduct->images[0]) }}" 
+                                    @php
+                                        $relatedImage = null;
+                                        if(isset($relatedProduct->images) && trim($relatedProduct->images) !== '') {
+                                            $relatedImage = asset('storage/' . ltrim($relatedProduct->images, '/'));
+                                        }
+                                    @endphp
+                                    @if($relatedImage)
+                                        <img src="{{ $relatedImage }}"
                                              alt="{{ $relatedProduct->product_name }}"
-                                             class="w-full h-48 object-center object-cover">
+                                             class="w-full h-48 object-center object-contain bg-white">
                                     @else
                                         <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
                                             <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
