@@ -34,9 +34,9 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <!-- Main Image -->
                     <div class="relative">
-                        @if(isset($product->images) && is_array($product->images) && count($product->images) > 0)
+                        @if(isset($product->images) && trim($product->images) !== '')
                             <img id="mainImage" 
-                                 src="{{ asset('storage/' . $product->images[0]) }}" 
+                                 src="{{ asset('storage/' . ltrim($product->images, '/')) }}" 
                                  alt="{{ $product->product_name }}"
                                  class="w-full h-96 object-cover object-center">
                         @else
@@ -60,20 +60,7 @@
                     </div>
                     
                     <!-- Thumbnail Images -->
-                    @if(isset($product->images) && is_array($product->images) && count($product->images) > 1)
-                        <div class="p-4">
-                            <div class="flex space-x-2 overflow-x-auto">
-                                @foreach($product->images as $index => $image)
-                                    <button onclick="changeMainImage('{{ asset('storage/' . $image) }}')"
-                                            class="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 border-gray-200 hover:border-blue-500 focus:border-blue-500 transition-colors">
-                                        <img src="{{ asset('storage/' . $image) }}" 
-                                             alt="Thumbnail {{ $index + 1 }}"
-                                             class="w-full h-full object-cover">
-                                    </button>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
+                    {{-- Nếu sau này muốn hỗ trợ nhiều ảnh, có thể sửa lại đoạn này --}}
                 </div>
             </div>
 

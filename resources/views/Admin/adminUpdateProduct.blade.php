@@ -29,6 +29,15 @@
         @csrf
         <input type="hidden" name="product_id" value="{{ $product->product_id }}">
         <div class="mb-4">
+            
+            @if(!empty($product->images))
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <img src="{{ asset('storage/' . $product->images) }}" alt="Ảnh" class="w-16 h-16 object-cover rounded border">
+                </div>
+                <input type="hidden" name="old_images" value="{{ $product->images }}">
+            @endif
+        </div>
+        <div class="mb-4">
             <label for="product_name" class="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
             <input type="text" name="product_name" id="product_name" value="{{ old('product_name', $product->product_name) }}" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2 px-3 py-2">
         </div>
@@ -40,9 +49,14 @@
                 @endforeach
             </select>
         </div>
+        
         <div class="mb-4">
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
             <textarea name="description" id="description" rows="4" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">{{ old('description', $product->description) }}</textarea>
+        </div>
+        <div class="mb-4">
+            <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Ảnh sản phẩm</label>
+            <input type="file" name="images[]" id="images" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div class="mb-4">
             <label for="is_active" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>

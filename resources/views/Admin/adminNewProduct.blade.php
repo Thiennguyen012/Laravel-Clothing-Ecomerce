@@ -28,6 +28,7 @@
 
     <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" class="bg-white shadow rounded-lg p-6 space-y-6">
         @csrf
+        
         <div>
             <label for="product_name" class="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
             <input type="text" name="product_name" id="product_name" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
@@ -44,6 +45,10 @@
         <div>
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
             <textarea name="description" id="description" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+        <div>
+            <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Ảnh sản phẩm</label>
+            <input type="file" name="images[]" id="images" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
             <label for="is_active" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>

@@ -17,9 +17,10 @@
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden group cursor-pointer"
                  onclick="window.location.href='{{ route('product.show', $item->product_id) }}'">
                 <!-- Product Image -->
+                {{-- {{ dd($item->images) }} --}}
                 <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
-                    @if($item->images)
-                        <img src="{{ $item->images }}" 
+                    @if(!empty($item->images))
+                        <img src="{{ asset('storage/' . $item->images) }}" 
                              alt="{{ $item->product_name }}" 
                              class="h-48 w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
                     @else

@@ -17,8 +17,8 @@ interface IProductRepository extends IBaseRepository
     public function filterProductsBySlug($categorySlug = null, $minPrice = null, $maxPrice = null, $inStock = null, $order = null);
     public function adminFilterProducts($categoryId = null, $inStock = null, $product_name = null, $sort = null, $direction = null);
     // crud
-    public function newProduct($product_name, $description, $is_active, $category_id);
-    public function updateProduct($product_id, $product_name, $description, $is_active, $category_id);
+    public function newProduct($product_name, $description, $images, $is_active, $category_id);
+    public function updateProduct($product_id, $product_name, $description, $images, $is_active, $category_id);
     public function deleteProduct($product_id);
 
     public function searchProducts($product_name);

@@ -19,7 +19,7 @@ class Product extends Model
 
     // Cast certain fields to specific types
     protected $casts = [
-        'images' => 'array',
+        // 'images' => 'array',
         'is_active' => 'boolean',
         'price' => 'decimal:2'
     ];
