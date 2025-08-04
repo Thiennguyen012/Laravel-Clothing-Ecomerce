@@ -118,7 +118,7 @@
                     <h3 class="text-2xl font-semibold text-gray-900 text-center mb-8">Đội Ngũ Của Chúng Tôi</h3>
                     <div class="grid md:grid-cols-3 gap-6">
                         <div class="text-center">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
                                  alt="CEO" 
                                  class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
                             <h4 class="text-lg font-semibold text-gray-900">Nguyễn Văn A</h4>
@@ -127,7 +127,7 @@
                         </div>
 
                         <div class="text-center">
-                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b04c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
                                  alt="Design Director" 
                                  class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
                             <h4 class="text-lg font-semibold text-gray-900">Trần Thị B</h4>

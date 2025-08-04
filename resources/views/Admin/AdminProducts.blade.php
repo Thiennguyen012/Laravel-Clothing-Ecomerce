@@ -79,6 +79,11 @@
                         </a>
                     </th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
+                        <a href="{{ sortUrl('variants_count') }}" class="flex items-center gap-1">
+                            Số variant <span class="text-xs">{{ sortIcon('variants_count') }}</span>
+                        </a>
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none">
                         <a href="{{ sortUrl('price') }}" class="flex items-center gap-1">
                             Giá <span class="text-xs">{{ sortIcon('price') }}</span>
                         </a>
@@ -106,6 +111,11 @@
                             </a>
                         </td>
                         <td class="px-4 py-2">{{ $product->category->category_name ?? '-' }}</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ $product->variants->count() ?? 0 }}
+                            </span>
+                        </td>
                         <td class="px-4 py-2">
                             @php
                                 if($product->variants && $product->variants->count() > 0) {
@@ -141,7 +151,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-4 py-6 text-center text-gray-500">Không có sản phẩm nào.</td>
+                        <td colspan="8" class="px-4 py-6 text-center text-gray-500">Không có sản phẩm nào.</td>
                     </tr>
                 @endforelse
             </tbody>

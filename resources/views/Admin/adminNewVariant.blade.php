@@ -27,15 +27,45 @@
 
     <form method="POST" action="{{ route('admin.variants.store') }}" enctype="multipart/form-data" class="bg-white shadow rounded-lg p-6 space-y-6">
         @csrf
-        <div>
-            <label for="product_id" class="block text-sm font-medium text-gray-700 mb-1">Sản phẩm</label>
-            <select name="product_id" id="product_id" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-                <option value="">Chọn sản phẩm</option>
-                @foreach($products as $product)
-                    <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
-                @endforeach
-            </select>
-        </div>
+        @if(request('product_id') || $product_id ?? null)
+            <!-- Nếu có product_id từ URL hoặc route parameter, ẩn dropdown và hiển thị thông tin sản phẩm -->
+            @php
+                $productId = request('product_id') ?? ($product_id ?? null);
+                $selectedProduct = $products->firstWhere('product_id', $productId);
+            @endphp
+            @if($selectedProduct)
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sản phẩm</label>
+                    <div class="p-3 bg-gray-50 border border-gray-300 rounded-md">
+                        <span class="font-medium">{{ $selectedProduct->product_name }}</span>
+                    </div>
+                    <input type="hidden" name="product_id" value="{{ $selectedProduct->product_id }}">
+                </div>
+            @else
+                <div>
+                    <label for="product_id" class="block text-sm font-medium text-gray-700 mb-1">Sản phẩm</label>
+                    <select name="product_id" id="product_id" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                        <option value="">Chọn sản phẩm</option>
+                        @foreach($products as $product)
+                            <option value="{{ $product->product_id }}" {{ $productId == $product->product_id ? 'selected' : '' }}>
+                                {{ $product->product_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+        @else
+            <!-- Nếu không có product_id, hiển thị dropdown bình thường -->
+            <div>
+                <label for="product_id" class="block text-sm font-medium text-gray-700 mb-1">Sản phẩm</label>
+                <select name="product_id" id="product_id" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="">Chọn sản phẩm</option>
+                    @foreach($products as $product)
+                        <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
         <div>
             <label for="sku" class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
             <input type="text" name="sku" id="sku" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
@@ -61,8 +91,9 @@
             <input type="number" name="quantity" id="quantity" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
         </div>
         <div>
-            <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Ảnh (images)</label>
-            <input type="text" name="images" id="images" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Ảnh biến thể</label>
+            <input type="file" name="images[]" id="images" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" multiple>
+            <p class="text-sm text-gray-500 mt-1">Có thể chọn nhiều ảnh cùng lúc</p>
         </div>
         <div>
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
@@ -76,7 +107,11 @@
             </select>
         </div>
         <div class="flex justify-between items-center mt-6">
-            <a href="{{ route('admin.products.variants', ['id' => $product->product_id]) }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Quay lại</a>
+            @if($productId)
+                <a href="{{ route('admin.products.variants', ['id' => $productId]) }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Quay lại</a>
+            @else
+                <a href="{{ route('admin.products.showAll') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Quay lại</a>
+            @endif
             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Thêm biến thể</button>
         </div>
     </form>

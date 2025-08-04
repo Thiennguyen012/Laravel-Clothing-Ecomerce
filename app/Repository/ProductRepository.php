@@ -153,6 +153,10 @@ class ProductRepository extends BaseRepository implements IProductRepository
                         $direction
                     );
                     break;
+                case 'variants_count':
+                    // Sắp xếp theo số lượng variant
+                    $query = $query->withCount('variants')->orderBy('variants_count', $direction);
+                    break;
             }
         }
 

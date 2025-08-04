@@ -32,6 +32,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
         Route::prefix('variant')->name('variants.')->group(function () {
             Route::get('/new', [VariantController::class, 'showNewVariant'])->name('newVariant');
+            Route::get('/new/{product_id}', [VariantController::class, 'showNewVariant'])->name('newVariantForProduct');
             Route::post('/new', [VariantController::class, 'newVariant'])->name('store');
             Route::get('/{id}', [VariantController::class, 'showUpdateVariant'])->name('updateVariant');
             Route::post('/{id}', [VariantController::class, 'updateVariant'])->name('update');

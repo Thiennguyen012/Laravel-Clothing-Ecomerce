@@ -9,7 +9,7 @@
     </div>
 
     <div class="flex justify-start mb-4">
-        <a href="{{ route('admin.variants.newVariant', ['product_id' => $products->product_id ?? $products->id]) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+        <a href="{{ route('admin.variants.newVariantForProduct', ['product_id' => $products->product_id ?? $products->id]) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
             <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>

@@ -17,7 +17,7 @@ class VariantController extends Controller
         $this->productService = $productService;
     }
 
-    public function showNewVariant()
+    public function showNewVariant(Request $request, $product_id = null)
     {
         $products = $this->productService->getProductWithVariant();
         return view('Admin.adminNewVariant', compact('products'));
@@ -25,6 +25,13 @@ class VariantController extends Controller
 
     public function newVariant(Request $request)
     {
+        // Xử lý upload ảnh
+        if ($request->hasFile('images')) {
+            $file = $request->file('images')[0];
+            $fileName = time() . '-' . $file->getClientOriginalName();
+            $path = $file->storeAs('images/variants', $fileName, 'public');
+            $request->merge(['images' => $path]);
+        }
         $this->variantService->newVariant($request);
         return redirect()->back()->with('success', 'Thêm variant mới thành công!');
     }
@@ -41,9 +48,8 @@ class VariantController extends Controller
         if ($request->hasFile('images')) {
             $file = $request->file('images')[0];
             $fileName = time() . '-' . $file->getClientOriginalName();
-            $path = $file->storeAs('images/vairiants', $fileName);
+            $path = $file->storeAs('images/variants', $fileName, 'public');
             $request->merge(['images' => $path]);
-            // dd($path);
         } else {
             // Nếu không upload mới, giữ nguyên ảnh cũ
             $request->merge(['images' => $request->input('old_images')]);

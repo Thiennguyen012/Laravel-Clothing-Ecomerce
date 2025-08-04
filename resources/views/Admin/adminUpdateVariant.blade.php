@@ -38,11 +38,15 @@
             <input type="number" name="quantity" value="{{ old('quantity', $variant->quantity ?? '') }}" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2" required>
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 font-semibold mb-2">Ảnh (images)</label>
-            <input type="file" name="images[]" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+            <label class="block text-gray-700 font-semibold mb-2">Ảnh biến thể</label>
+            <input type="file" name="images[]" class="border-gray-300 rounded-md shadow-sm w-full focus:ring-blue-500 focus:border-blue-500 px-3 py-2" multiple>
+            <p class="text-sm text-gray-500 mt-1">Có thể chọn nhiều ảnh cùng lúc</p>
             @if(!empty($variant->images))
-                <div class="flex flex-wrap gap-2 mt-2">
-                    <img src="{{ asset('storage/' . $variant->images) }}" alt="Ảnh" class="w-16 h-16 object-cover rounded border">
+                <div class="mt-2">
+                    <p class="text-sm text-gray-600 mb-2">Ảnh hiện tại:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <img src="{{ asset('storage/' . $variant->images) }}" alt="Ảnh" class="w-16 h-16 object-cover rounded border">
+                    </div>
                 </div>
             @endif
         </div>
