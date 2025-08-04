@@ -11,4 +11,10 @@ interface IOrderService
     public function findOrderByCustomerName(Request $request);
     public function getOrderWithItemsById($order_id);
     public function updateOrderStatus(Request $request);
+    public function countOrder();
+    public function totalRevenue();
+    public function getStatistics(Request $request);
+    public function getTotalProducts();
+    public function getTotalUsers();
+    public function getDashboardData(Request $request);
 }

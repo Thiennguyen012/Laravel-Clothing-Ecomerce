@@ -3,7 +3,11 @@
 namespace App\Repository;
 
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use App\Repository\Interfaces\IOrderRepository;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class OrderRepository extends BaseRepository implements IOrderRepository
 {
@@ -98,9 +102,109 @@ class OrderRepository extends BaseRepository implements IOrderRepository
         $result = $this->model->with('items')->where('id', $order_id)->first();
         return $result;
     }
-    public function updateOrderStatus($order_id, $status = null) {
+    public function updateOrderStatus($order_id, $status = null)
+    {
         $this->model->where('id', $order_id)->update([
             'status' => $status,
         ]);
+    }
+    public function countOrder()
+    {
+        return $this->model->count();
+    }
+    public function totalRevenue()
+    {
+        return $this->model->where('status', 'completed')->sum('total');
+    }
+    public function getStatistics($period, $startDate, $endDate)
+    {
+        // Lấy tất cả đơn hàng để có dữ liệu hiển thị, doanh thu chỉ tính từ 'completed'
+        $query = $this->model->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+
+        switch ($period) {
+            case 'day':
+                return $query->select(
+                    DB::raw('DATE(created_at) as period'),
+                    DB::raw('COUNT(*) as orders'),
+                    DB::raw('SUM(CASE WHEN status = "completed" THEN total ELSE 0 END) as revenue')
+                )
+                    ->groupBy(DB::raw('DATE(created_at)'))
+                    ->orderBy('period')
+                    ->get()
+                    ->map(function ($item) {
+                        $item->period = Carbon::parse($item->period)->format('d/m/Y');
+                        return $item;
+                    });
+
+            case 'month':
+                return $query->select(
+                    DB::raw('YEAR(created_at) as year'),
+                    DB::raw('MONTH(created_at) as month'),
+                    DB::raw('COUNT(*) as orders'),
+                    DB::raw('SUM(CASE WHEN status = "completed" THEN total ELSE 0 END) as revenue')
+                )
+                    ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
+                    ->orderBy('year')
+                    ->orderBy('month')
+                    ->get()
+                    ->map(function ($item) {
+                        $item->period = "Tháng {$item->month}/{$item->year}";
+                        return $item;
+                    });
+
+            case 'quarter':
+                return $query->select(
+                    DB::raw('YEAR(created_at) as year'),
+                    DB::raw('QUARTER(created_at) as quarter'),
+                    DB::raw('COUNT(*) as orders'),
+                    DB::raw('SUM(CASE WHEN status = "completed" THEN total ELSE 0 END) as revenue')
+                )
+                    ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('QUARTER(created_at)'))
+                    ->orderBy('year')
+                    ->orderBy('quarter')
+                    ->get()
+                    ->map(function ($item) {
+                        $item->period = "Quý {$item->quarter}/{$item->year}";
+                        return $item;
+                    });
+
+            case 'year':
+                return $query->select(
+                    DB::raw('YEAR(created_at) as year'),
+                    DB::raw('COUNT(*) as orders'),
+                    DB::raw('SUM(CASE WHEN status = "completed" THEN total ELSE 0 END) as revenue')
+                )
+                    ->groupBy(DB::raw('YEAR(created_at)'))
+                    ->orderBy('year')
+                    ->get()
+                    ->map(function ($item) {
+                        $item->period = "Năm {$item->year}";
+                        return $item;
+                    });
+
+            default:
+                return collect();
+        }
+    }
+
+    public function getTotalProducts()
+    {
+        return Product::count();
+    }
+
+    public function getTotalUsers()
+    {
+        return User::count();
+    }
+
+    public function getDashboardStatistics($period, $startDate, $endDate)
+    {
+        return [
+            'totalOrders' => $this->countOrder(),
+            'totalRevenue' => $this->totalRevenue(),
+            'totalProducts' => $this->getTotalProducts(),
+            'totalUsers' => $this->getTotalUsers(),
+            'statistics' => $this->getStatistics($period, $startDate, $endDate)
+        ];
     }
 }

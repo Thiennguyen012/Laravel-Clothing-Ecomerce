@@ -20,4 +20,10 @@ interface IOrderRepository extends IBaseRepository
     );
     public function getOrderWithItemsById($order_id);
     public function updateOrderStatus($order_id, $status = null);
+    public function countOrder();
+    public function totalRevenue();
+    public function getStatistics($period, $startDate, $endDate);
+    public function getTotalProducts();
+    public function getTotalUsers();
+    public function getDashboardStatistics($period, $startDate, $endDate);
 }

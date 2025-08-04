@@ -9,6 +9,7 @@ use App\Repository\Interfaces\IVariantRepository;
 use App\Services\Interfaces\IOrderService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrderService implements IOrderService
 {
@@ -128,5 +129,124 @@ class OrderService implements IOrderService
         $order_id = $request->input('order_id');
         $status = $request->input('status');
         return $this->orderRepository->updateOrderStatus($order_id, $status);
+    }
+    public function countOrder()
+    {
+        $result = $this->orderRepository->countOrder();
+        return $result;
+    }
+    public function totalRevenue()
+    {
+        $result =  $this->orderRepository->totalRevenue();
+        return $result;
+    }
+    public function getStatistics(Request $request)
+    {
+        $period = $request->get('period');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        $result = $this->orderRepository->getStatistics($period, $start_date, $end_date);
+        return $result;
+    }
+
+    public function getTotalProducts()
+    {
+        return $this->orderRepository->getTotalProducts();
+    }
+
+    public function getTotalUsers()
+    {
+        return $this->orderRepository->getTotalUsers();
+    }
+
+    public function getDashboardData(Request $request)
+    {
+        // Business Logic: Xử lý parameters và set default values
+        $period = $request->get('period', 'day');
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+
+        // Business Logic: Set default dates based on period
+        if (empty($startDate) || empty($endDate)) {
+            [$startDate, $endDate] = $this->getDefaultDateRange($period);
+        }
+
+        // Business Logic: Cập nhật request với processed values
+        $request->merge([
+            'period' => $period,
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ]);
+
+        // Database Logic: Delegate to repository
+        $dashboardStats = $this->orderRepository->getDashboardStatistics($period, $startDate, $endDate);
+
+        // Business Logic: Format and prepare data for view
+        return $this->formatDashboardData($dashboardStats, $period);
+    }
+
+    /**
+     * Business Logic: Get default date range based on period
+     */
+    private function getDefaultDateRange($period)
+    {
+        switch ($period) {
+            case 'day':
+                return [
+                    Carbon::now()->subDays(7)->format('Y-m-d'),
+                    Carbon::now()->format('Y-m-d')
+                ];
+            case 'month':
+                return [
+                    Carbon::now()->subMonths(6)->startOfMonth()->format('Y-m-d'),
+                    Carbon::now()->endOfMonth()->format('Y-m-d')
+                ];
+            case 'quarter':
+                return [
+                    Carbon::now()->subYears(2)->startOfQuarter()->format('Y-m-d'),
+                    Carbon::now()->endOfQuarter()->format('Y-m-d')
+                ];
+            case 'year':
+                return [
+                    Carbon::now()->subYears(3)->startOfYear()->format('Y-m-d'),
+                    Carbon::now()->endOfYear()->format('Y-m-d')
+                ];
+            default:
+                return [
+                    Carbon::now()->subMonths(3)->format('Y-m-d'),
+                    Carbon::now()->format('Y-m-d')
+                ];
+        }
+    }
+
+    /**
+     * Business Logic: Format dashboard data for view
+     */
+    private function formatDashboardData($dashboardStats, $period)
+    {
+        // Business Logic: Create period text mapping
+        $periodText = [
+            'day' => 'theo ngày',
+            'month' => 'theo tháng',
+            'quarter' => 'theo quý',
+            'year' => 'theo năm'
+        ][$period] ?? 'theo ngày';
+
+        // Business Logic: Prepare chart data
+        $chartData = [
+            'labels' => $dashboardStats['statistics']->pluck('period')->toArray(),
+            'revenue' => $dashboardStats['statistics']->pluck('revenue')->toArray(),
+            'orders' => $dashboardStats['statistics']->pluck('orders')->toArray()
+        ];
+
+        return [
+            'totalOrders' => $dashboardStats['totalOrders'],
+            'totalRevenue' => $dashboardStats['totalRevenue'],
+            'totalProducts' => $dashboardStats['totalProducts'],
+            'totalUsers' => $dashboardStats['totalUsers'],
+            'statistics' => $dashboardStats['statistics'],
+            'chartData' => $chartData,
+            'periodText' => $periodText
+        ];
     }
 }

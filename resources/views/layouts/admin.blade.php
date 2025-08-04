@@ -37,7 +37,7 @@
                     @csrf
                     <x-responsive-nav-link :href="route('admin.logout')"
                         onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Đăng xuất') }}
                     </x-responsive-nav-link>
                 </form>
             </nav>
@@ -47,5 +47,6 @@
             @yield('content')
         </main>
     </div>
+    @yield('scripts')
 </body>
 </html>
