@@ -1,70 +1,7 @@
 // cart.js - Xử lý riêng cho trang giỏ hàng
 
-// Hàm hiển thị thông báo đẹp
-function showNotification(message, type = "info") {
-    // Xóa thông báo cũ nếu có
-    const existingNotification = document.querySelector(".cart-notification");
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-
-    // Tạo thông báo mới
-    const notification = document.createElement("div");
-    notification.className = "cart-notification";
-
-    const colors = {
-        success: "border-green-400 bg-green-50 text-green-800",
-        error: "border-red-400 bg-red-50 text-red-800",
-        info: "border-blue-400 bg-blue-50 text-blue-800",
-    };
-
-    const icons = {
-        success:
-            '<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>',
-        error: '<svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>',
-        info: '<svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>',
-    };
-
-    notification.innerHTML = `
-        <div class="border-l-4 p-4 ${colors[type]} vietnamese-text">
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    ${icons[type]}
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium">${message}</p>
-                </div>
-                <div class="ml-auto pl-3">
-                    <button onclick="this.parentElement.parentElement.parentElement.parentElement.remove()" class="inline-flex text-gray-400 hover:text-gray-600">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(notification);
-
-    // Tự động ẩn sau 5 giây
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
-}
-
-// Hàm hiển thị toast notification mới
-function showCartToast(message = "Cập nhật số lượng thành công!") {
-    const toast = document.getElementById("cart-toast");
-    const msg = document.getElementById("cart-toast-message");
-    if (msg) msg.textContent = message;
-    toast.classList.remove("hidden");
-    setTimeout(() => {
-        toast.classList.add("hidden");
-    }, 2500);
-}
+// Biến lưu trữ variant_id cần xóa
+let currentDeleteVariantId = null;
 
 // Các hàm xử lý cập nhật số lượng, xóa sản phẩm, xóa toàn bộ giỏ hàng
 function updateQuantity(variantId, newQuantity) {
@@ -87,48 +24,47 @@ function updateQuantity(variantId, newQuantity) {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                showCartToast("Cập nhật số lượng thành công!");
-                setTimeout(() => window.location.reload(), 1000);
+                showNotification("success", "Đã cập nhật số lượng sản phẩm");
+                // Reload page after a short delay to show the notification
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 showNotification(
-                    "Không thể cập nhật số lượng: " +
-                        (data.message || "Lỗi không xác định"),
-                    "error"
+                    "error",
+                    data.message || "Không thể cập nhật số lượng"
                 );
             }
         })
         .catch((error) => {
-            showNotification("Có lỗi xảy ra khi cập nhật số lượng", "error");
+            showNotification("error", "Có lỗi xảy ra khi cập nhật số lượng");
         });
 }
 
-// Hàm hiển thị modal confirm delete
-function showDeleteModal(variantId) {
-    const modal = document.getElementById("delete-modal");
-    const confirmBtn = document.getElementById("confirm-delete");
-
-    // Lưu variantId để sử dụng khi confirm
-    confirmBtn.setAttribute("data-variant-id", variantId);
-
-    modal.classList.remove("hidden");
-}
-
-// Hàm đóng modal confirm delete
-function closeDeleteModal() {
-    const modal = document.getElementById("delete-modal");
-    modal.classList.add("hidden");
-}
-
-// Hàm xử lý khi user confirm xóa
-function confirmDelete() {
-    const confirmBtn = document.getElementById("confirm-delete");
-    const variantId = confirmBtn.getAttribute("data-variant-id");
-
-    closeDeleteModal();
-    removeItem(variantId);
-}
-
 function removeItem(variantId) {
+    // Lưu variant_id và hiển thị modal
+    currentDeleteVariantId = variantId;
+    showDeleteModal();
+}
+
+function showDeleteModal() {
+    const modal = document.getElementById("deleteConfirmModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById("deleteConfirmModal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+    currentDeleteVariantId = null;
+}
+
+function confirmDelete() {
+    if (!currentDeleteVariantId) return;
+
     const token = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
@@ -140,24 +76,28 @@ function removeItem(variantId) {
             Accept: "application/json",
         },
         body: JSON.stringify({
-            variant_id: variantId,
+            variant_id: currentDeleteVariantId,
         }),
     })
         .then((response) => response.json())
         .then((data) => {
+            closeDeleteModal();
             if (data.success) {
-                showCartToast("Đã xóa sản phẩm khỏi giỏ hàng!");
-                setTimeout(() => window.location.reload(), 1000);
+                showNotification("success", "Đã xóa sản phẩm khỏi giỏ hàng");
+                // Reload page after a short delay to show the notification
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 showNotification(
-                    "Không thể xóa sản phẩm: " +
-                        (data.message || "Lỗi không xác định"),
-                    "error"
+                    "error",
+                    data.message || "Không thể xóa sản phẩm"
                 );
             }
         })
         .catch((error) => {
-            showNotification("Có lỗi xảy ra khi xóa sản phẩm", "error");
+            closeDeleteModal();
+            showNotification("error", "Có lỗi xảy ra khi xóa sản phẩm");
         });
 }
 
@@ -177,24 +117,81 @@ function clearCart() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                showNotification("Đã xóa toàn bộ giỏ hàng!", "success");
-                setTimeout(() => window.location.reload(), 1000);
+                showNotification("success", "Đã xóa toàn bộ giỏ hàng");
+                // Reload page after a short delay to show the notification
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 showNotification(
-                    "Không thể xóa giỏ hàng: " +
-                        (data.message || "Lỗi không xác định"),
-                    "error"
+                    "error",
+                    data.message || "Không thể xóa giỏ hàng"
                 );
             }
         })
         .catch((error) => {
-            showNotification("Có lỗi xảy ra khi xóa giỏ hàng", "error");
+            showNotification("error", "Có lỗi xảy ra khi xóa giỏ hàng");
         });
 }
 
+// Function to show notification
+function showNotification(type, message) {
+    // Tạo notification element
+    const notification = document.createElement("div");
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
+
+    if (type === "success") {
+        notification.className += " bg-green-500 text-white";
+    } else {
+        notification.className += " bg-red-500 text-white";
+    }
+
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                ${
+                    type === "success"
+                        ? '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
+                        : '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>'
+                }
+            </div>
+            <div class="ml-3">
+                <p class="text-sm font-medium">${message}</p>
+            </div>
+            <div class="ml-4 flex-shrink-0">
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" class="text-white hover:text-gray-200">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Thêm vào DOM
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove("translate-x-full");
+    }, 100);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.add("translate-x-full");
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Gán các hàm vào window để HTML gọi được
 window.updateQuantity = updateQuantity;
 window.removeItem = removeItem;
 window.clearCart = clearCart;
+window.showNotification = showNotification;
 window.showDeleteModal = showDeleteModal;
 window.closeDeleteModal = closeDeleteModal;
 window.confirmDelete = confirmDelete;
