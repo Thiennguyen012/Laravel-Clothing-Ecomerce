@@ -1,0 +1,59 @@
+# Laravel E-commerce Docker Compose
+#
+# Usage:
+#   docker-compose up -d --build    # Start all services
+#   docker-compose down             # Stop all services
+#   docker-compose logs [service]   # View logs
+#
+# After first run, execute:
+#   docker-compose exec php php artisan migrate --force
+#   docker-compose exec php php artisan db:seed
+#
+version: "3.8"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    volumes:
+      - .:/var/www
+      - ./.env.docker:/var/www/.env
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: hehehe
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: hehehe
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
