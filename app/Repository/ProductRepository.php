@@ -68,7 +68,9 @@ class ProductRepository extends BaseRepository implements IProductRepository
         $query = $this->model->with(['variants', 'category'])->where('is_active', 1);
 
         if ($product_name) {
-            $query = $query->where('product_name', 'REGEXP', '[[:<:]]' . $product_name . '[[:>:]]');
+            // Escape special regex characters and use word boundaries
+            $escapedName = preg_quote($product_name, '/');
+            $query = $query->whereRaw("product_name REGEXP ?", ["(^|[[:space:]]){$escapedName}([[:space:]]|$)"]);
         }
 
         if ($categoryId) {
