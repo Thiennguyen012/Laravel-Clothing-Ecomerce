@@ -166,7 +166,6 @@
             </div>
         </div>
     </div>
-    @vite(['resources/js/cart.js'])
     
     <!-- Modal xác nhận xóa sản phẩm -->
     <div id="deleteConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center">
@@ -194,4 +193,6 @@
             </div>
         </div>
     </div>
+
+@vite(['resources/js/cart.js'])
 </x-app-layout>

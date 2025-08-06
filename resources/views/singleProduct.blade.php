@@ -390,7 +390,6 @@ function showChooseVariantModal() {
 }
 window.showChooseVariantModal = showChooseVariantModal;
 </script>
-@vite(['resources/js/singleProduct.js'])
 
 <style>
 @keyframes fade-in-up {
@@ -417,4 +416,6 @@ window.showChooseVariantModal = showChooseVariantModal;
         left: 0;
     }
 </style>
+
+@vite(['resources/js/singleProduct.js'])
 </x-app-layout>
