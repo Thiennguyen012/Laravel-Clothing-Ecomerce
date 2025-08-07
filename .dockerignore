@@ -1,5 +1,6 @@
 public/storage
 node_modules
+vendor
 npm-debug.log
 .git
 .gitignore
