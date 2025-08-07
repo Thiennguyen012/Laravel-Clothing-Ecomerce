@@ -104,9 +104,29 @@ class OrderRepository extends BaseRepository implements IOrderRepository
     }
     public function updateOrderStatus($order_id, $status = null)
     {
+        // Lấy thông tin đơn hàng trước khi update (load nested relationship)
+        $order = $this->model->with('items.variant')->find($order_id);
+
+        if (!$order) {
+            return false;
+        }
+
+        // Update status
         $this->model->where('id', $order_id)->update([
             'status' => $status,
         ]);
+
+        // Nếu status = cancelled, hoàn lại số lượng cho các variant
+        if ($status == 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->variant) {
+                    // Cộng lại số lượng đã trừ vào variant (sử dụng stock_quantity)
+                    $item->variant->increment('quantity', $item->quantity);
+                }
+            }
+        }
+
+        return true;
     }
     public function countOrder()
     {
