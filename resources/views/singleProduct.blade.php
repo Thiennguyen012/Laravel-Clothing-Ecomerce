@@ -77,8 +77,33 @@
                         @endif
                         <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $product->product_name }}</h1>
                         <p class="text-sm text-gray-600">SKU: {{ $product->sku ?? 'N/A' }}</p>
+                        {{-- Average rating (under SKU) --}}
+                        
+                        @php
+                            $avg = $product->avg_rating ?? null;
+                            $totalRatings = $product->total_ratings ?? (isset($allRatings) ? $allRatings->total() : null);
+                        @endphp
+                        @if($avg)
+                            <div class="mt-2 flex items-center space-x-3">
+                                <div class="flex items-center">
+                                    @php
+                                        $full = floor($avg);
+                                        $fraction = $avg - $full;
+                                    @endphp
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= $full)
+                                            <i class="fas fa-star mr-0.5 text-yellow-500 text-2xl" aria-hidden="true"></i>
+                                        @elseif($i == $full + 1 && $fraction >= 0.5)
+                                            <i class="fas fa-star-half-alt mr-0.5 text-yellow-500 text-2xl" aria-hidden="true"></i>
+                                        @else
+                                            <i class="far fa-star mr-0.5 text-gray-300 text-2xl" aria-hidden="true"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <div class="text-sm text-gray-600">{{ number_format($avg, 1) }} <span class="text-gray-400">({{ $totalRatings ?? 0 }})</span></div>
+                            </div>
+                        @endif
                     </div>
-
                     <!-- Price -->
                     <div class="mb-6">
                         @if($product->variants && $product->variants->count() > 0)
@@ -314,11 +339,11 @@
                                             <div class="mb-4">
                                                 <label class="block text-sm font-medium text-gray-700 mb-2">Số sao</label>
                                                 <div id="star-select" class="flex items-center space-x-2">
-                                                    <button type="button" class="star-btn text-gray-400" data-value="1" onclick="setStar(1)">★</button>
-                                                    <button type="button" class="star-btn text-gray-400" data-value="2" onclick="setStar(2)">★</button>
-                                                    <button type="button" class="star-btn text-gray-400" data-value="3" onclick="setStar(3)">★</button>
-                                                    <button type="button" class="star-btn text-gray-400" data-value="4" onclick="setStar(4)">★</button>
-                                                    <button type="button" class="star-btn text-gray-400" data-value="5" onclick="setStar(5)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400 text-2xl" data-value="1" onclick="setStar(1)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400 text-2xl" data-value="2" onclick="setStar(2)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400 text-2xl" data-value="3" onclick="setStar(3)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400 text-2xl" data-value="4" onclick="setStar(4)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400 text-2xl" data-value="5" onclick="setStar(5)">★</button>
                                                 </div>
                                                 <input type="hidden" id="form-star" name="star" value="5">
                                             </div>
@@ -354,16 +379,33 @@
                                                         <div class="border-b pb-4">
                                                             <div class="flex items-start justify-between">
                                                                 <div>
-                                                                    <div class="font-semibold">{{ $rating->reviewer_name ?? optional($rating->user)->name ?? 'Khách' }}</div>
+                                                                    <div class="flex items-center space-x-2">
+                                                                        <div>
+                                                                            <div class="font-semibold">{{ $rating->reviewer_name ?? optional($rating->user)->name ?? 'Khách' }}</div>
+                                                                            @php
+                                                                                $rSize = optional($rating->variant)->size;
+                                                                                $rColor = optional($rating->variant)->color;
+                                                                            @endphp
+                                                                            @if($rSize || $rColor)
+                                                                                <div class="text-xs text-gray-500 mt-1">
+                                                                                    {{ $rSize ?? '' }}@if($rSize && $rColor)/@endif{{ $rColor ?? '' }}
+                                                                                </div>
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
                                                                     <div class="text-sm text-gray-500">{{ optional($rating->user)->email ?? '' }}</div>
                                                                 </div>
                                                                 <div class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($rating->created_at)->diffForHumans() }}</div>
                                                             </div>
                                                             <div class="mt-2">
                                                                 {{-- Stars --}}
-                                                                <div class="text-yellow-400">
-                                                                    @for($i = 1; $i <= 5; $i++)
-                                                                        <span class="inline-block">@if($i <= $rating->star) ★ @else <span class="text-gray-300">★</span> @endif</span>
+                                                                <div class="flex items-center">
+                                                                        @for($i = 1; $i <= 5; $i++)
+                                                                        @if($i <= $rating->star)
+                                                                            <span class="inline-block text-yellow-500 mr-0.5">★</span>
+                                                                        @else
+                                                                            <span class="inline-block text-gray-300 mr-0.5">★</span>
+                                                                        @endif
                                                                     @endfor
                                                                 </div>
                                                                 <p class="mt-2 text-gray-700">{{ $rating->comment }}</p>
@@ -373,6 +415,7 @@
                                                 </div>
 
                                                 {{-- Custom pagination to match UI: summary + compact controls --}}
+                                                @if($allRatings->total() > $allRatings->perPage())
                                                 <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
                                                     <div>
                                                         @if($allRatings->total() > 0)
@@ -405,6 +448,7 @@
                                                         @endif
                                                     </nav>
                                                 </div>
+                                                @endif
                                             @else
                                                 <div class="text-center py-8">
                                                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -504,9 +548,9 @@ window.showChooseVariantModal = showChooseVariantModal;
 // Rating form helpers
 function setStar(value) {
     document.getElementById('form-star').value = value;
-    document.querySelectorAll('#star-select .star-btn').forEach(function(btn){
+        document.querySelectorAll('#star-select .star-btn').forEach(function(btn){
         var v = parseInt(btn.getAttribute('data-value'));
-        btn.classList.toggle('text-yellow-400', v <= value);
+        btn.classList.toggle('text-yellow-500', v <= value);
         btn.classList.toggle('text-gray-400', v > value);
     });
 }
