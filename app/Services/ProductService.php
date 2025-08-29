@@ -32,6 +32,11 @@ class ProductService implements IProductService
         $result = $this->productRepository->getProductWithVariant();
         return $result;
     }
+    public function getAllProductsWithVariants()
+    {
+        $result = $this->productRepository->getAllProductsWithVariants();
+        return $result;
+    }
     public function getProductWithVariantById($product_id)
     {
         $result = $this->productRepository->getProductWithVariantById($product_id);

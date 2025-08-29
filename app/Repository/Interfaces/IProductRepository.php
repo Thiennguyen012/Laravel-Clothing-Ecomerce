@@ -6,6 +6,8 @@ interface IProductRepository extends IBaseRepository
 {
     //
     public function getProductWithVariant();
+    // returns all products with variants (no pagination) for admin dropdowns
+    public function getAllProductsWithVariants();
     public function getProductWithVariantById($id);
     public function getProductWithVariantByCategoryId($id);
     public function getProductInAmount($categoryId = null, $minPrice, $maxPrice);

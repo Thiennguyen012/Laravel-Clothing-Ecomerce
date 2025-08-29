@@ -17,6 +17,11 @@ class ProductRepository extends BaseRepository implements IProductRepository
     {
         return $this->model->with(['variants', 'category'])->paginate(12);
     }
+    // Return all products with variants (no pagination) for admin dropdowns
+    public function getAllProductsWithVariants()
+    {
+        return $this->model->with(['variants', 'category'])->get();
+    }
     public function getProductWithVariantById($id)
     {
         $product = $this->model->with('category', 'variants.ratings')->find($id);

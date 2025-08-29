@@ -19,7 +19,8 @@ class VariantController extends Controller
 
     public function showNewVariant(Request $request, $product_id = null)
     {
-        $products = $this->productService->getProductWithVariant();
+        // For the admin "new variant" dropdown we want all products (no pagination)
+        $products = $this->productService->getAllProductsWithVariants();
         return view('Admin.adminNewVariant', compact('products'));
     }
 
