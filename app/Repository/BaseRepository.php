@@ -30,4 +30,21 @@ abstract class BaseRepository implements IBaseRepository
     {
         return $this->model->create($attributes);
     }
+    public function update($id, array $data)
+    {
+        $record = $this->model->find($id);
+        if ($record) {
+            $record->update($data);
+            return $record;
+        }
+        return null;
+    }
+    public function delete($id)
+    {
+        $record = $this->model->find($id);
+        if ($record) {
+            return $record->delete();
+        }
+        return false;
+    }
 }

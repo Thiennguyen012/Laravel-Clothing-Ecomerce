@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+
 use App\Services\Interfaces\ICartService;
 use App\Services\CartService;
 use Illuminate\Support\ServiceProvider;
@@ -11,10 +12,12 @@ use App\Services\Interfaces\ICategoryService;
 use App\Services\CategoryService;
 use App\Services\Interfaces\IOrderItemService;
 use App\Services\Interfaces\IOrderService;
+use App\Services\Interfaces\IRatingService;
 use App\Services\Interfaces\IUserService;
 use App\Services\Interfaces\IVariantService;
 use App\Services\OrderItemService;
 use App\Services\OrderService;
+use App\Services\RatingService;
 use App\Services\UserService;
 use App\Services\VariantService;
 
@@ -40,5 +43,6 @@ class ServicesProvider extends ServiceProvider
         $this->app->bind(IOrderService::class, OrderService::class);
         $this->app->bind(IOrderItemService::class, OrderItemService::class);
         $this->app->bind(IUserService::class, UserService::class);
+        $this->app->bind(IRatingService::class, RatingService::class);
     }
 }

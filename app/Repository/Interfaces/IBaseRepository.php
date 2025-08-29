@@ -9,4 +9,6 @@ interface IBaseRepository
     public function findOne(array $condition = []);
     public function save(array $data = []);
     public function create(array $attributes);
+    public function update($id, array $data);
+    public function delete($id);
 }
