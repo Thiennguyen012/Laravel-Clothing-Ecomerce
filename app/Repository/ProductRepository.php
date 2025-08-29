@@ -19,9 +19,11 @@ class ProductRepository extends BaseRepository implements IProductRepository
     }
     public function getProductWithVariantById($id)
     {
-        $product = $this->model->with('category')->find($id);
+        $product = $this->model->with('category', 'variants.ratings')->find($id);
         if ($product) {
-            $product->variants_paginated = $product->variants()->paginate(10);
+            $product->variants_paginated = $product->variants()->paginate(5);
+            // paginate ratings (5 per page) và eager-load user để tránh N+1
+            $product->all_ratings = $product->ratings()->with('user')->paginate(5);
         }
         return $product;
     }

@@ -42,6 +42,14 @@ class Product extends Model
         return $this->hasMany(Variant::class, 'product_id', 'product_id');
     }
 
+    public function ratings()
+    {
+        // hasManyThrough params: related, through, firstKey (on through -> product_id),
+        // secondKey (on related -> variant_id), localKey (on parent -> product_id),
+        // secondLocalKey (on through -> id)
+        return $this->hasManyThrough(Rating::class, Variant::class, 'product_id', 'variant_id', 'product_id', 'id');
+    }
+
     // Additional useful methods
 
     /**

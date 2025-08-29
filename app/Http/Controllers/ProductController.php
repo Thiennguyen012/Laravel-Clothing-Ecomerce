@@ -53,8 +53,8 @@ class ProductController extends Controller
                 ->where('product_id', '!=', $product_id)
                 ->take(4);
         }
-
-        return view('singleProduct', compact('product', 'relatedProducts'));
+        $allRatings = $product->all_ratings;
+        return view('singleProduct', compact('product', 'relatedProducts', 'allRatings'));
     }
     // public function showProductByCategoryId($id)
     // {

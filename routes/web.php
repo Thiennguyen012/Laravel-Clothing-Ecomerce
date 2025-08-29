@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RatingController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,15 @@ Route::get('/search', [ProductController::class, 'showAll'])->name('products.sea
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'showAll'])->name('products');
     Route::get('/{id}', [ProductController::class, 'getProductDetail'])->name('product.show')->where('id', '[0-9]+');
+});
+
+// Rating routes - ensure named routes exist for different usages
+Route::prefix('rating')->name('rating.')->group(function () {
+    // POST /rating/new -> named route rating.new
+    Route::post('/new', [RatingController::class, 'newRating'])->name('new');
+
+    // POST /rating -> named route rating.store (used by forms expecting rating.store)
+    Route::post('/', [RatingController::class, 'newRating'])->name('store');
 });
 Route::get('/about', function () {
     return view('about');

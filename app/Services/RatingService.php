@@ -30,7 +30,7 @@ class RatingService implements IRatingService
             'session_id' => $session_id,
             'star' => $request->input('star'),
             'comment' => $request->input('comment'),
-            'reviewer_name' => ($user_id) ? $name : 'guest',
+            'reviewer_name' => ($user_id) ? $name : $request->input('reviewer_name'),
         ];
         
         return $this->ratingRepository->create($data);

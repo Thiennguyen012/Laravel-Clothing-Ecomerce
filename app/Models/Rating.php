@@ -8,6 +8,7 @@ class Rating extends Model
 {
     protected $table = 'rating';
     protected $guarded = 'id';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'variant_id',

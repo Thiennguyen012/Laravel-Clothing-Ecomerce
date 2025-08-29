@@ -19,7 +19,7 @@ class Variant extends Model
     {
         return $this->hasMany(OrderItem::class, 'variant_id');
     }
-    public function rating(){
+    public function ratings(){
         return $this->hasMany(Rating::class, 'variant_id');
     }
 }

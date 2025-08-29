@@ -301,11 +301,120 @@
                             
                             <!-- Reviews Tab -->
                             <div id="reviews-tab" class="tab-content hidden">
-                                <div class="text-center py-8">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.45L3 21l2.45-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path>
-                                    </svg>
-                                    <p class="mt-2 text-gray-500">Chưa có đánh giá nào cho sản phẩm này.</p>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Rating Form -->
+                                    <div class="bg-white p-4 rounded-md border">
+                                        <h3 class="text-lg font-medium mb-3">Đánh giá sản phẩm</h3>
+                                        <form id="rating-form" method="POST" action="{{ route('rating.new') }}">
+                                            @csrf
+                                            {{-- reuse selected variant id from page; will be filled before submit --}}
+                                            <input type="hidden" id="form-variant-id" name="variant_id" value="">
+
+                                            {{-- Star selector --}}
+                                            <div class="mb-4">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Số sao</label>
+                                                <div id="star-select" class="flex items-center space-x-2">
+                                                    <button type="button" class="star-btn text-gray-400" data-value="1" onclick="setStar(1)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400" data-value="2" onclick="setStar(2)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400" data-value="3" onclick="setStar(3)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400" data-value="4" onclick="setStar(4)">★</button>
+                                                    <button type="button" class="star-btn text-gray-400" data-value="5" onclick="setStar(5)">★</button>
+                                                </div>
+                                                <input type="hidden" id="form-star" name="star" value="5">
+                                            </div>
+
+                                            {{-- Comment --}}
+                                            <div class="mb-4">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Bình luận</label>
+                                                <textarea name="comment" id="form-comment" rows="4" class="w-full border border-gray-300 rounded-md p-2" placeholder="Viết cảm nhận của bạn..."></textarea>
+                                            </div>
+
+                                            {{-- Reviewer name (optional for guests) --}}
+                                            @guest
+                                            <div class="mb-4">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Tên của bạn (hiển thị)</label>
+                                                <input type="text" name="reviewer_name" class="w-full border border-gray-300 rounded-md p-2" placeholder="Tên của bạn">
+                                            </div>
+                                            @endguest
+
+                                            <div class="flex items-center space-x-3">
+                                                <button type="submit" onclick="submitRatingAjax(event)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">Gửi đánh giá</button>
+                                                <button type="button" onclick="resetRatingForm()" class="text-gray-600 hover:text-gray-800">Thiết lập lại</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Existing reviews / placeholder -->
+                                    <div class="bg-white p-4 rounded-md border">
+                                        <h3 class="text-lg font-medium mb-3">Đánh giá của khách hàng</h3>
+                                        <div id="reviews-list">
+                                            @if(isset($allRatings) && $allRatings->total() > 0)
+                                                <div class="space-y-4">
+                                                    @foreach($allRatings as $rating)
+                                                        <div class="border-b pb-4">
+                                                            <div class="flex items-start justify-between">
+                                                                <div>
+                                                                    <div class="font-semibold">{{ $rating->reviewer_name ?? optional($rating->user)->name ?? 'Khách' }}</div>
+                                                                    <div class="text-sm text-gray-500">{{ optional($rating->user)->email ?? '' }}</div>
+                                                                </div>
+                                                                <div class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($rating->created_at)->diffForHumans() }}</div>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                {{-- Stars --}}
+                                                                <div class="text-yellow-400">
+                                                                    @for($i = 1; $i <= 5; $i++)
+                                                                        <span class="inline-block">@if($i <= $rating->star) ★ @else <span class="text-gray-300">★</span> @endif</span>
+                                                                    @endfor
+                                                                </div>
+                                                                <p class="mt-2 text-gray-700">{{ $rating->comment }}</p>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                                {{-- Custom pagination to match UI: summary + compact controls --}}
+                                                <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                                                    <div>
+                                                        @if($allRatings->total() > 0)
+                                                            Showing {{ $allRatings->firstItem() }} to {{ $allRatings->lastItem() }} of {{ $allRatings->total() }} results
+                                                        @endif
+                                                    </div>
+
+                                                    <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                                        {{-- Previous --}}
+                                                        @if($allRatings->onFirstPage())
+                                                            <span class="inline-flex items-center px-3 py-2 bg-white text-gray-400 border border-gray-200 rounded-l-md opacity-60 cursor-default" aria-disabled="true">‹</span>
+                                                        @else
+                                                            <a href="{{ $allRatings->previousPageUrl() }}" class="inline-flex items-center px-3 py-2 bg-white text-gray-600 border border-gray-200 rounded-l-md hover:bg-gray-50">‹</a>
+                                                        @endif
+
+                                                        {{-- Page numbers (compact) --}}
+                                                        @for($page = 1; $page <= $allRatings->lastPage(); $page++)
+                                                            @if($page == $allRatings->currentPage())
+                                                                <span class="inline-flex items-center px-3 py-2 bg-gray-200 text-gray-900">{{ $page }}</span>
+                                                            @else
+                                                                <a href="{{ $allRatings->url($page) }}" class="inline-flex items-center px-3 py-2 bg-white text-gray-600 border border-gray-200 hover:bg-gray-50">{{ $page }}</a>
+                                                            @endif
+                                                        @endfor
+
+                                                        {{-- Next --}}
+                                                        @if($allRatings->hasMorePages())
+                                                            <a href="{{ $allRatings->nextPageUrl() }}" class="inline-flex items-center px-3 py-2 bg-white text-gray-600 border border-gray-200 rounded-r-md hover:bg-gray-50">›</a>
+                                                        @else
+                                                            <span class="inline-flex items-center px-3 py-2 bg-white text-gray-400 border border-gray-200 rounded-r-md opacity-60 cursor-default" aria-disabled="true">›</span>
+                                                        @endif
+                                                    </nav>
+                                                </div>
+                                            @else
+                                                <div class="text-center py-8">
+                                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.45L3 21l2.45-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path>
+                                                    </svg>
+                                                    <p class="mt-2 text-gray-500">Chưa có đánh giá nào cho sản phẩm này.</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -389,6 +498,112 @@ function showChooseVariantModal() {
     }
 }
 window.showChooseVariantModal = showChooseVariantModal;
+</script>
+
+<script>
+// Rating form helpers
+function setStar(value) {
+    document.getElementById('form-star').value = value;
+    document.querySelectorAll('#star-select .star-btn').forEach(function(btn){
+        var v = parseInt(btn.getAttribute('data-value'));
+        btn.classList.toggle('text-yellow-400', v <= value);
+        btn.classList.toggle('text-gray-400', v > value);
+    });
+}
+
+function resetRatingForm(){
+    document.getElementById('form-star').value = 5;
+    setStar(5);
+    document.getElementById('form-comment').value = '';
+    @guest
+    var reviewer = document.querySelector('[name="reviewer_name"]'); if(reviewer) reviewer.value = '';
+    @endguest
+}
+
+function submitRatingForm(e){
+    // Ensure variant selected
+    var selectedVariant = document.getElementById('selected-variant-id') || document.getElementById('form-variant-id');
+    var varId = selectedVariant ? selectedVariant.value : '';
+    if(!varId){
+        e.preventDefault();
+        alert('Vui lòng chọn biến thể (size/màu) muốn đánh giá trước khi gửi.');
+        return false;
+    }
+
+    // Copy to form hidden input
+    document.getElementById('form-variant-id').value = varId;
+
+    // Allow form to submit normally (server-side will validate)
+    return true;
+}
+
+// When user selects variant elsewhere on page, keep form updated
+function syncVariantToForm(variantId){
+    var hidden = document.getElementById('selected-variant-id');
+    if(hidden) hidden.value = variantId;
+    var formHidden = document.getElementById('form-variant-id');
+    if(formHidden) formHidden.value = variantId;
+}
+
+// Expose to global for reuse in existing variant selection logic
+window.syncVariantToForm = syncVariantToForm;
+
+// Initialize stars
+document.addEventListener('DOMContentLoaded', function(){ setStar(5); });
+</script>
+
+<script>
+async function submitRatingAjax(e){
+    e.preventDefault();
+
+    // get form values
+    var variantId = document.getElementById('form-variant-id').value || (document.getElementById('selected-variant-id') ? document.getElementById('selected-variant-id').value : '');
+    if(!variantId){ alert('Vui lòng chọn biến thể để đánh giá.'); return; }
+
+    var star = document.getElementById('form-star').value;
+    var comment = document.getElementById('form-comment').value;
+    var reviewer = document.querySelector('[name="reviewer_name"]') ? document.querySelector('[name="reviewer_name"]').value : '';
+
+    var payload = {
+        variant_id: variantId,
+        star: star,
+        comment: comment,
+        reviewer_name: reviewer
+    };
+
+    // CSRF token from meta tag or blade csrf field
+    var token = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : document.querySelector('input[name="_token"]') ? document.querySelector('input[name="_token"]').value : '';
+
+    try{
+        var resp = await fetch('{{ route('rating.store') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if(!resp.ok){
+            var err = await resp.json().catch(()=>({message: 'Lỗi server'}));
+            alert(err.message || 'Lỗi khi gửi đánh giá');
+            return;
+        }
+
+        var data = await resp.json();
+        if(data.success){
+            alert(data.message || 'Gửi đánh giá thành công');
+            // Optionally refresh reviews list or reset form
+            resetRatingForm();
+        } else {
+            alert(data.message || 'Không thể gửi đánh giá');
+        }
+    }catch(err){
+        console.error(err);
+        alert('Lỗi khi gửi đánh giá');
+    }
+}
 </script>
 
 <style>

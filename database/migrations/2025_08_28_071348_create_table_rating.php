@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rating', function (Blueprint $table) {
-            $table->id();
+            $table->id()->autoIncrement();
 
             // Foreign keys với đúng type và table name
             $table->unsignedBigInteger('variant_id');
             $table->foreign('variant_id')->references('id')->on('variants')->onDelete('cascade');
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('session_id')->nullable();
 
