@@ -10,6 +10,8 @@ use App\Services\Interfaces\IOrderService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderSuccessfully;
 
 class OrderService implements IOrderService
 {
@@ -84,6 +86,15 @@ class OrderService implements IOrderService
             // xử lý xóa cart
             $this->cartRepository->deleteCart($user_id, $session_id);
 
+            // Gửi email xác nhận (không block transaction on mail failure)
+            try {
+                if ($order && !empty($order->customer_email)) {
+                    Mail::to($order->customer_email)->send(new OrderSuccessfully($order, $cartItems));
+                }
+            } catch (\Exception $e) {
+                // Log hoặc ignore - không rollback transaction vì mail thất bại
+                // logger()->error('Mail sending failed for order: '.$order->id . ' error: ' . $e->getMessage());
+            }
 
             return $order;
         });
